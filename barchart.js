@@ -111,7 +111,7 @@ const data = {
 
 const options = {
   chart: {
-    height: 100%,
+    height: '300px',
     width: '400px',
     type: 'inline',
     font: {                             //default
@@ -124,8 +124,8 @@ const options = {
   title: {
     label: 'Evolution of North America\'s Population',
     alignment: {
-      vertical: 'top',
-      horizontal: 'middle'
+      vertical: 'top',                  //top, middle, bottom
+      horizontal: 'center'              //top, center, bottom
     },
     font: {                             //if not supplied should default to top level
       family: 'Arial, sans-serif',
@@ -160,5 +160,10 @@ const options = {
   }
 
 };
+
+
+CHART HTML
+
+
 
 */

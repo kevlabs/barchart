@@ -6,9 +6,116 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Bar Chart Demo</title>
   <script src="barchart.js" defer></script>
+  <style>
+  #y-axis li::after {
+    position: absolute;
+    top: calc(50% - 1px);
+    right: 0;
+    width: 5px;
+    height: 1px;
+    background-color: #000;
+    content: '';
+  }
+  </style>
 </head>
 <body>
 <div id="bar-chart-container"></div>
+
+
+<div id="bc-container" style="display: flex; flex-direction: column; width: 400px; height: 300px;">
+  <header id="title"><h5 style="text-align:center">TITLE</h5></header>
+  <div class="chart-flex" style="flex-grow: 1; display: flex;">
+    <section id="y-axis" style="display: flex;">
+      <h6>Label</h6>
+      <ul>
+        <li>tick 1</li>
+        <li>tick 2</li>
+      </ul>
+    </section>
+    <div class="chart-flex" style="flex-grow: 1; display: flex; flex-direction: column;">
+      <div id="chart-area" style="position: relative; flex-grow: 1; display: flex; border-left: 1px solid #000;">
+        <div class="tick-bar" style="position: absolute; top: calc(20% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
+        <div class="tick-bar" style="position: absolute; top: calc(40% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
+        <div class="tick-bar" style="position: absolute; top: calc(60% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
+        <div class="tick-bar" style="position: absolute; top: calc(80% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
+        <div class="tick-bar" style="position: absolute; top: calc(100% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
+        <div class="data-group" style="flex-grow: 1; position: relative; margin: 0 10px;">
+          <div style="position: absolute; bottom: 0; width: 33.33%; height: 80%; background-color: red;"></div>
+          <div style="position: absolute; bottom: 0; left: 33.33%; width: 33.33%; height: 50%; background-color: blue;"></div>
+          <div style="position: absolute; bottom: 0; left: 66.66%; width: 33.33%; height: 60%; background-color: yellow;"></div>
+        </div>
+        <div class="data-group" style="flex-grow: 1; margin: 0 10px; background-color: #eee;"></div>
+        <div class="data-group" style="flex-grow: 1; margin: 0 10px; background-color: #eee;"></div>
+      </div>
+      <section id="x-axis">
+        <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+          <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 1</li>
+          <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 2</li>
+          <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 3</li>
+        </ul>
+        <h6 style="text-align:center">Label</h6>
+      </section>
+    </div>
+  </div>
+</div>
+
+
+
+<div id="bc-container" style="display: flex; flex-direction: column; width: 400px; height: 300px;">
+  <header id="title"><h5 style="text-align:center">TITLE</h5></header>
+  <div class="chart-grid" style="flex-grow: 1; display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    'y-axis chart-area'
+    '. x-axis';
+  justify-content: stretch;">
+    <section id="y-axis" style="grid-area: y-axis; display: flex;">
+    <!--<section id="y-axis" style="grid-area: y-axis; position: relative;">
+      <h6 style="position: absolute; top: 50%; transform: translate(-10px, -50%) rotate(-90deg); margin: 0; padding: 10px">X-Axis Super Long Label</h6>-->
+      <h6 style="writing-mode: vertical-rl; transform: rotate(180deg); text-align:center; margin: 0; padding: 10px;">X-Axis Super Long Label</h6>
+      <ul style="height: 100%; list-style: none; display: flex; flex-direction: column; margin: 0; padding: 0;">
+        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;"><span style="display: inline-block; vertical-align: bottom;">tick 1</span></li>
+        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 2</li>
+        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 3</li>
+        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 4</li>
+        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 5</li>
+      </ul>
+    </section>
+    <div id="chart-area" style="grid-area: chart-area; position: relative; display: flex; border-left: 1px solid #000;">
+      <div class="tick-bar" style="position: absolute; top: calc(10% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
+      <div class="tick-bar" style="position: absolute; top: calc(30% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
+      <div class="tick-bar" style="position: absolute; top: calc(50% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
+      <div class="tick-bar" style="position: absolute; top: calc(70% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
+      <div class="tick-bar" style="position: absolute; top: calc(90% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
+      <div class="data-group" style="flex-grow: 1; position: relative; margin: 0 10px;">
+        <div style="position: absolute; bottom: 10%;; width: 33.33%; height: 80%; background-color: red;"></div>
+        <div style="position: absolute; bottom: 10%;; left: 33.33%; width: 33.33%; height: 50%; background-color: blue;"></div>
+        <div style="position: absolute; bottom: 0; left: 66.66%; width: 33.33%; height: 10%; background-color: yellow;"></div>
+      </div>
+      <div class="data-group" style="flex-grow: 1; display: flex; align-items: flex-end; margin: 0 10px">
+        <div style="flex-grow:1; position: relative; bottom: 10%; height: 80%; background-color: red;"></div>
+        <div style="flex-grow:1; position: relative; bottom: 10%; height: 50%; background-color: blue;"></div>
+        <div style="flex-grow:1; position: relative; bottom: 0; height: 10%; background-color: yellow;"></div>
+      </div>
+      <div class="data-group" style="flex-grow: 1; display: flex; flex-direction: column-reverse; margin: 0 10px">
+        <div style="position: relative; bottom: calc(10% * 2/3); height: calc(80% * 1/3); background-color: red;"></div>
+        <div style="position: relative; bottom: calc(10% * 2/3); height: calc(50% * 1/3); background-color: blue;"></div>
+        <div style="order: -1; position: relative; bottom: calc(10% * 2/3); height: calc(10% * 1/3); background-color: yellow;"></div>
+      </div>
+    </div>
+    <section id="x-axis" style="grid-area: x-axis;">
+      <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+        <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 1</li>
+        <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 2</li>
+        <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 3</li>
+      </ul>
+      <h6 style="text-align:center; margin: 0; padding: 10px">Y-Axis could be long Label</h6>
+    </section>
+
+  </div>
+</div>
+
 
 </body>
 </html>
