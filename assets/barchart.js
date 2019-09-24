@@ -131,7 +131,7 @@ const options = {
       weight: 'bold'
     }
   },
-  x-axis: {
+  xAxis: {
     label: 'Year',
     groupSpaceBetween: '20px',
     font: {                             //if not supplied should default to top level
@@ -141,7 +141,7 @@ const options = {
       weight: 'bold'
     }
   }
-  y-axis: {
+  yAxis: {
     label: 'million inhabitants',
     unit: {
       base: 1000000,
@@ -165,42 +165,59 @@ CHART HTML
 */
 
 class BarChart {
-  constuctor(data, options, container) {
+  constructor(data, options, container) {
 
     //validate input
-    const safeInput = BarChart.validateInput(data, options, container);
-    if (!safeInput) { return false; }
+    if (!BarChart.validateInput(data, options, container)) { return false; }
 
     //init properties
-    [this.data, this.options, this.container] = safeInput;
+    this.container = container;
+    this.data = JSON.parse(JSON.stringify(data));
+    this.options = JSON.parse(JSON.stringify(options));
 
     //start rendering chart
+    //set chart type - might move to a parent function
+    this.chartType = this.options.type === 'inline' || this.options.type === 'stacked' ? this.options.type : 'inline';
+
+    this._calcYAxisData();
+    this._renderPlotArea();
+
 
 
 
 
   }
+
   static validateInput(data, options, container) {
+    return (BarChart.validateContainerInput(container) && BarChart.validateDataInput(data) && BarChart.validateOptionsInput(options)) ? true : false;
+  }
+
+  static validateContainerInput(container) {
+    //make sure element exists
+    if (container instanceof HTMLElement) {
+      return container;
+    } else {
+      console.error('Element is not an HTML element!');
+      return false;
+    }
+  }
+
+  static validateDataInput(data) {
     try {
 
-      //make sure element exists
-      if (Object.getPrototypeOf(container) !== '[object HTMLElement]') {
-        throw 'Element is not an HTML element!';
-      }
-
       //CHECK DATA OBJECT
-      if(typeof data !== 'object') {
+      if (typeof data !== 'object' || Object.getPrototypeOf(data) !== Object.prototype) {
         throw 'Data input is not an object!';
-      } else if (!data.groups || !data.series || !data.groups.length || !data.series.length) {
+      } else if (typeof data.groups !== 'object' || typeof data.series !== 'object' || Object.getPrototypeOf(data.groups) !== Array.prototype || Object.getPrototypeOf(data.series) !== Array.prototype) {
         throw 'Data input "groups" and "series" properties are either inexistent, of a type other than "array" or empty.';
       }
 
       data.series.forEach( (series, i) => {
-        if(typeof series !== 'object' || !series.label || (typeof series.label !== 'string' && typeof series.label !== 'number') || !series.data || !series.data.length || series.data.length !== data.groups.length) {
+        if (typeof series !== 'object' || Object.getPrototypeOf(series) !== Object.prototype) {
           throw 'The data.series array must only contain objects.';
-        } else if (!series.label || (typeof series.label !== 'string' && typeof series.label !== 'number')) {
+        } else if (typeof series.label !== 'string' && typeof series.label !== 'number') {
           throw 'The label property may be missing or be in a format other than string/number in some of your data.series objects.';
-        } else if (!series.data || !series.data.length || series.data.length !== data.groups.length) {
+        } else if (typeof series.data !== 'object' || Object.getPrototypeOf(series.data) !== Array.prototype || series.data.length !== data.groups.length) {
           throw 'The data property in one or more of your data.series objects is either inexistent, of a type other than "array" or of a size different than that of data.groups.';
         } else {
           series.data.forEach( (dataPoint, j) => {
@@ -211,35 +228,40 @@ class BarChart {
         }
       });
 
-      //make copy of object to not alter original
-      data = JSON.parse(JSON.stringify(data));
+      return data;
 
+    }
+    catch(e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  static validateOptionsInput(options) {
+    try {
       //CHECK OPTIONS OBJECT
       //check title.label
-      if(typeof options !== 'object') {
+      if (typeof options !== 'object' || Object.getPrototypeOf(options) !== Object.prototype) {
         throw 'Options input is not an object!';
-      } else if (typeof options.title !== 'object' || !options.title.label || (typeof options.title.label !== 'string' && typeof options.title.label !== 'number')) {
+      } else if (typeof options.title !== 'object' || Object.getPrototypeOf(options.title) !== Object.prototype || (typeof options.title.label !== 'string' && typeof options.title.label !== 'number')) {
         throw 'The options.title property is either missing, is not an object or does not include a string/number as its label.';
       }
 
       //check xAxis label
-      if (typeof options.xAxis !== 'object' || !options.xAxis.label || (typeof options.xAxis.label !== 'string' && typeof options.xAxis.label !== 'number')) {
+      if (typeof options.xAxis !== 'object' || Object.getPrototypeOf(options.xAxis) !== Object.prototype || (typeof options.xAxis.label !== 'string' && typeof options.xAxis.label !== 'number')) {
         throw 'The options.xAxis property is either missing, is not an object or does not include a string/number as its label.';
       }
 
       //check yAxis label, unit.base and unit.step
-      if (typeof options.yAxis !== 'object' || !options.yAxis.label || (typeof options.yAxis.label !== 'string' && typeof options.yAxis.label !== 'number')) {
+      if (typeof options.yAxis !== 'object' || Object.getPrototypeOf(options.yAxis) !== Object.prototype || (typeof options.yAxis.label !== 'string' && typeof options.yAxis.label !== 'number')) {
         throw 'The options.yAxis property is either missing, is not an object or does not include a string/number as its label. Please include the applicable unit in brackets (e.g. "Distance travelled (in km)")';
-      } else if (typeof options.yAxis.unit !== 'object' || !options.yAxis.unit.base || typeof options.yAxis.unit.base !== 'number') {
+      } else if (typeof options.yAxis.unit !== 'object' || Object.getPrototypeOf(options.yAxis.unit) !== Object.prototype || typeof options.yAxis.unit.base !== 'number') {
         throw 'options.yAxis must have a "unit" property. That property should include a base in the number format. The base will be applied to your raw data so as to convert it in the unit of your choosing (for example if your data is in "cm" but should be displayed in "km", the applicable base is 100000 - 100,000cm in 1km).';
-      } else if (!options.yAxis.unit.step || typeof options.yAxis.unit.step !== 'number') {
-        throw 'options.yAxis.unit must have a "step" property. It should reference a number and will be used to determine the space between each tick mark on the y-axis.';
+      } else if (typeof options.yAxis.unit.step !== 'number' || options.yAxis.unit.step <= 0) {
+        throw 'options.yAxis.unit must have a "step" property. It should reference a strictly positive number in the same unit as your raw data and will be used to determine the space between each tick mark on the y-axis.';
       }
 
-      //make copy of object to not alter original
-      options = JSON.parse(JSON.stringify(options));
-
-      return [data, options, container];
+      return options;
 
     }
     catch(e) {
@@ -249,20 +271,132 @@ class BarChart {
 
   }
   static sanitizeColor(color) {
+    if (typeof color !== 'string') { return false; }
     return /^#[\da-fA-F]{3,6}$/.test(color) ? color : false;
   }
   static sanitizeSize(size) {
-    size = size.match(/\d+/);
-    return size ? size + 'px' : false;
+    if (typeof size !== 'string' && typeof size !== 'number') { return false; }
+    size = size.toString().match(/\d+/);
+    return size ? size[0] + 'px' : false;
   }
   static sanitizeFontFamily(family) {
-    family = family.replace(/\\/, '').replace(/(?:[^\\]|(?:[^\\]|^)(?:\\\\)*)(['"])/, '\$1');
-    family = family.match(/^[a-zA-Z,'"\\]+$/);
-    return family ? family : false;
+    if (typeof family !== 'string') { return false; }
+    family = family.replace(/(\\)|(['"])/g, (match, slash, quote) => slash ? '' : '\\' + quote );
+    return /^[a-zA-Z,'"\\\s]+$/.test(family) ? family[0] : false;
   }
   static sanitizeFontWeight(weight) {
-    weight = weight.match(/^[1-9]0{2}|normal|bold|bold|light|lighter$/);
-    return weight ? weight : false;
+    if (typeof weight !== 'string' && typeof weight !== 'number') { return false; }
+    return /^([1-9]0{2}|normal|bold|bold|light|lighter)$/.test(weight.toString()) ? weight : false;
+  }
+  convertDataPoint() {
+    //options.yAxis.unit.base
+    //data.series.data
+  }
+
+  _calcYAxisData() {
+
+    const dataPoints = [];
+    if (this.chartType === 'stacked') { this.groupStackedNegative = []; }
+
+    //calculate min and max values
+    for (let i = 0; i < this.data.groups.length; i++) {
+      if (this.chartType === 'stacked') { const seriesMinMax = [0, 0]; }
+      for (let j = 0; j < this.data.series.length; j++) {
+        if (this.chartType === 'stacked') {
+          if (this.data.series[j].data[i] < 0) {
+            seriesMinMax[0] += this.data.series[j].data[i];
+          } else {
+            seriesMinMax[1] += this.data.series[j].data[i];
+          }
+        } else {
+          dataPoints.push(this.data.series[j].data[i]);
+        }
+      }
+      if (this.chartType === 'stacked') {
+        this.groupStackedNegative.push(Math.round(seriesMinMax[0] * 10000) / 10000);
+        dataPoints.push(...seriesMinMax);
+      }
+    }
+
+    //all values in raw data unit
+    this.minVal = Math.min(...dataPoints);
+    this.maxVal = Math.max(...dataPoints);
+
+    this.stepBase = this.options.yAxis.unit.step / this.options.yAxis.unit.base;
+    this.minTickBase = Math.min(Math.floor(this.minVal / this.options.yAxis.unit.step) * this.stepBase, 0);
+    this.maxTickBase = Math.max(Math.ceil(this.maxVal / this.options.yAxis.unit.step) * this.stepBase, 0);
+    this.spanBase = this.maxTickBase - this.minTickBase;
+    this.numTick = 1 + this.spanBase / this.stepBase;
+  }
+
+  _renderDataPoints(groups) {
+
+    //determine vertical align of value within bar
+    const valVerticalAlign = typeof this.options.valueVerticalAlignment === 'string' && /top|middle|bottom/.test(this.options.valueVerticalAlignment) ? this.options.valueVerticalAlignment : 'middle';
+
+    //append data points to groups
+    this.data.series.forEach( ({data: series, backgroundColor}) => {
+      series.forEach( (dataPoint, i) => {
+        const dataValBase = Math.round(dataPoint / this.options.yAxis.unit.base * 100) / 100;
+
+        //create bar div elem
+        const barDivElem = document.createElement('div');
+        barDivElem.classList.add(`bc-data-series-${this.chartType}`);
+        barDivElem.style.height = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 100000 + '%';
+        //set bottom
+        barDivElem.style.bottom = Math.round((Math.min(this.chartType === 'inline' ? dataValBase : this.groupStackedNegative[i], 0) - this.minTickBase) / this.spanBase * 100000) / 100000 + 'px';
+        //set background-color
+        barDivElem.style.backgroundColor = backgroundColor;
+
+        //create inner data elem
+        const barDataElem = document.createElement('data');
+        barDataElem.classList.add(`bc-data-value-${valVerticalAlign}`);
+        barDataElem.setAttribute('value', dataValBase);
+        barDataElem.innerHTML = dataValBase;
+        barDivElem.append(barDataElem);
+
+        //append to div to group
+        groups[i].append(barDivElem);
+
+      } );
+    } );
+
+  }
+
+  _renderDataGroups(plotArea) {
+    //return an array of data-group containers
+    const groups = this.data.groups.map( (group) => {
+      const elem = document.createElement('div');
+      elem.classList.add(`bc-data-group-${this.chartType}`);
+      plotArea.append(elem);
+      return elem;
+    } );
+
+    this._renderDataPoints(groups);
+
+  }
+
+  _renderPlotArea() {
+
+    //render wrapper div
+    const wrapperElem = document.createElement('div');
+    wrapperElem.classList.add('bc-plot-area-wrapper');
+
+    //render grid lines
+    for (let i = 0, val = this.maxTickBase; i < this.numTick; i++) {
+      const gridLineElem = document.createElement('div');
+      gridLineElem.classList.add(val ? 'bc-grid-line' : 'bc-grid-line-origin');
+      wrapperElem.append(gridLineElem);
+      val -= this.stepBase;
+    }
+
+    //render plot area
+    const divElem = document.createElement('div');
+    divElem.classList.add('bc-plot-area');
+    this._renderDataGroups(divElem);
+    wrapperElem.append(divElem);
+
   }
 
 }
+
