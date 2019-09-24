@@ -79,17 +79,17 @@ const data = {
     {
       label: 'Canada',
       data: [21962032, 24819915, 28037420, 31020596, 33476688],
-      background-color: blue
+      backgroundColor: blue
     },
     {
       label: 'Mexico',
       data: [54669000, 71916000, 87890000, 105340000, 115683000],
-      background-color: green
+      backgroundColor: green
     },
     {
       label: 'USA',
       data: [206827000, 229466000, 252981000, 285082000, 311583000],
-      background-color: red
+      backgroundColor: red
     }
 
   ]
@@ -113,7 +113,7 @@ const options = {
   chart: {
     height: '300px',
     width: '400px',
-    type: 'inline',
+    type: 'inline',                     //inline, stacked
     font: {                             //default
       family: 'Arial, sans-serif',
       size: '16px',
@@ -123,10 +123,7 @@ const options = {
   },
   title: {
     label: 'Evolution of North America\'s Population',
-    alignment: {
-      vertical: 'top',                  //top, middle, bottom
-      horizontal: 'center'              //top, center, bottom
-    },
+    verticalAlignment:'top',            //top, middle, bottom
     font: {                             //if not supplied should default to top level
       family: 'Arial, sans-serif',
       size: '16px',
@@ -135,9 +132,9 @@ const options = {
     }
   },
   x-axis: {
-    label: 'year',
-    group-space-between: '20px',
-    data-alignment: 'center',
+    label: 'Year',
+    groupSpaceBetween: '20px',
+    dataAlignment: 'center',
     font: {                             //if not supplied should default to top level
       family: 'Arial, sans-serif',
       size: '16px',

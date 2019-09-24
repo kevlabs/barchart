@@ -1,0 +1,154 @@
+.bc-chart-area {
+  display: flex;
+  flex-direction: column; // change to column-reverse if title to be displayed below chart
+  min-width: 400px; // default
+  min-height: 300px; // default
+  font-family: Arial, Helvetica, sans-serif; // default
+}
+
+.bc-title {
+  display: block;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+}
+
+.bc-body-grid {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    'y-axis chart-area'
+    '. x-axis';
+  justify-content: stretch;
+}
+
+.bc-y-axis {
+  grid-area: y-axis;
+  display: flex;
+
+  & > h6 {
+    writing-mode: vertical-rl;
+    text-align:center;
+    transform: rotate(180deg);
+    margin: 0;
+    padding: 10px
+  }
+
+  & > ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    & li {
+      flex-grow: 1;
+      display: block;
+      position: relative;
+      padding: 0 10px;
+
+      & ::after {
+        position: absolute;
+        bottom: 1px;
+        right: 0;
+        width: 5px;
+        height: 1px;
+        background-color: #000;
+        content: '';
+      }
+    }
+
+  }
+}
+
+.bc-plot-area {
+  grid-area: chart-area;
+  position: relative;
+  display: flex;
+  border-left: 1px solid #000;
+}
+
+.bc-grid-line {
+  position: absolute;
+  top: calc(10% - 1px); // depends on line number and axis step
+  width: 100%;
+  z-index: -1;
+  border-bottom: 1px dashed #EEE;
+}
+
+.bc-data-group-inline {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+  margin: 0 10px; // user-defined - 10px = 0.5 * spaceBetween
+}
+
+.bc-data-group-stacked {
+  @extend .bc-data-group-inline;
+  flex-direction: column-reverse;
+}
+
+.bc-data-series-stacked {
+  position: relative;
+  bottom: 10%; //based on data
+  height: 80%; //based on data
+  background-color: red; // user-defined
+}
+
+.bc-data-series-inline {
+  @extend .bc-data-series-stacked;
+  flex-grow: 1;
+}
+
+.bc-data-series-stacked-negative {
+  @extend .bc-data-series-stacked;
+}
+
+%bc-data-value {
+  position: absolute;
+  left: 50%;
+}
+
+.bc-data-value-top {
+  @extend %bc-data-value;
+  top: 5px;
+  transform: translate(-50%, 0);
+}
+
+.bc-data-value-middle {
+  @extend %bc-data-value;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bc-data-value-bottom {
+  @extend %bc-data-value;
+  bottom: 5px;
+  transform: translate(-50%, 0);
+}
+
+.bc-x-axis {
+  grid-area: x-axis;
+
+  & > h6 {
+    text-align:center;
+    margin: 0;
+    padding: 10px;
+  }
+
+  & > ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+
+    & li {
+      flex-grow: 1;
+      display: inline-block;
+      margin: 0 10px;
+      text-align: center;
+    }
+  }
+}

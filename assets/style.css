@@ -1,0 +1,137 @@
+.bc-chart-area {
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+  min-height: 300px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.bc-title {
+  display: block;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+}
+
+.bc-body-grid {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas: "y-axis chart-area" ". x-axis";
+  justify-content: stretch;
+}
+
+.bc-y-axis {
+  grid-area: y-axis;
+  display: flex;
+}
+.bc-y-axis > h6 {
+  writing-mode: vertical-rl;
+  text-align: center;
+  transform: rotate(180deg);
+  margin: 0;
+  padding: 10px;
+}
+.bc-y-axis > ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.bc-y-axis > ul li {
+  flex-grow: 1;
+  display: block;
+  position: relative;
+  padding: 0 10px;
+}
+.bc-y-axis > ul li ::after {
+  position: absolute;
+  bottom: 1px;
+  right: 0;
+  width: 5px;
+  height: 1px;
+  background-color: #000;
+  content: "";
+}
+
+.bc-plot-area {
+  grid-area: chart-area;
+  position: relative;
+  display: flex;
+  border-left: 1px solid #000;
+}
+
+.bc-grid-line {
+  position: absolute;
+  top: calc(10% - 1px);
+  width: 100%;
+  z-index: -1;
+  border-bottom: 1px dashed #EEE;
+}
+
+.bc-data-group-inline, .bc-data-group-stacked {
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+  margin: 0 10px;
+}
+
+.bc-data-group-stacked {
+  flex-direction: column-reverse;
+}
+
+.bc-data-series-stacked, .bc-data-series-stacked-negative, .bc-data-series-inline {
+  position: relative;
+  bottom: 10%;
+  height: 80%;
+  background-color: red;
+}
+
+.bc-data-series-inline {
+  flex-grow: 1;
+}
+
+.bc-data-value-bottom, .bc-data-value-middle, .bc-data-value-top {
+  position: absolute;
+  left: 50%;
+}
+
+.bc-data-value-top {
+  top: 5px;
+  transform: translate(-50%, 0);
+}
+
+.bc-data-value-middle {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bc-data-value-bottom {
+  bottom: 5px;
+  transform: translate(-50%, 0);
+}
+
+.bc-x-axis {
+  grid-area: x-axis;
+}
+.bc-x-axis > h6 {
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+}
+.bc-x-axis > ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+.bc-x-axis > ul li {
+  flex-grow: 1;
+  display: inline-block;
+  margin: 0 10px;
+  text-align: center;
+}
+
+/*# sourceMappingURL=style.css.map */
