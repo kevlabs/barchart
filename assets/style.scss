@@ -1,14 +1,22 @@
 .bc-chart-area {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column; // change to column-reverse if title to be displayed below chart
   min-width: 400px; // default
   min-height: 300px; // default
   font-family: Arial, Helvetica, sans-serif; // default
+  font-size: 12px;
+  font-weight: 300;
+  border: 2px solid #000;
+  padding: 10px;
 }
 
 .bc-title {
   display: block;
   text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
   margin: 0;
   padding: 10px;
 }
@@ -19,7 +27,7 @@
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    'y-axis chart-area'
+    'y-axis plot-area'
     '. x-axis';
   justify-content: stretch;
 }
@@ -30,10 +38,12 @@
 
   & > h6 {
     writing-mode: vertical-rl;
-    text-align:center;
+    text-align: center;
     transform: rotate(180deg);
+    font-size: 14px;
+    font-weight: 500;
     margin: 0;
-    padding: 10px
+    padding: 10px 0;
   }
 
   & > ul {
@@ -41,52 +51,72 @@
     flex-direction: column;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 10px;
 
     & li {
       flex-grow: 1;
-      display: block;
-      position: relative;
-      padding: 0 10px;
-
-      & ::after {
-        position: absolute;
-        bottom: 1px;
-        right: 0;
-        width: 5px;
-        height: 1px;
-        background-color: #000;
-        content: '';
-      }
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      transform: translate(0, 35%);
+      padding: 0;
     }
 
   }
 }
 
-.bc-plot-area {
-  grid-area: chart-area;
+.bc-plot-area-wrapper {
+  grid-area: plot-area;
   position: relative;
   display: flex;
+  flex-direction: column;
   border-left: 1px solid #000;
 }
 
+
 .bc-grid-line {
-  position: absolute;
-  top: calc(10% - 1px); // depends on line number and axis step
-  width: 100%;
-  z-index: -1;
+  flex-grow: 1;
+  position: relative;
+  margin-top: -10px;
   border-bottom: 1px dashed #EEE;
+
+  &::before {
+    position: absolute;
+    bottom: -1px;;
+    left: -5px;
+    width: 5px;
+    height: 1px;
+    background-color: #000;
+    content: '';
+  }
 }
 
-.bc-data-group-inline {
+.bc-grid-line-origin {
+  @extend .bc-grid-line;
+  border-bottom: 1px solid #000;
+}
+
+.bc-plot-area {
+  position: absolute;
+  bottom: 1px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+%bc-data-group {
   flex-grow: 1;
   display: flex;
-  align-items: flex-end;
   margin: 0 10px; // user-defined - 10px = 0.5 * spaceBetween
 }
 
+.bc-data-group-inline {
+  @extend %bc-data-group;
+  align-items: flex-end;
+}
+
 .bc-data-group-stacked {
-  @extend .bc-data-group-inline;
+  @extend %bc-data-group;
   flex-direction: column-reverse;
 }
 
@@ -104,6 +134,7 @@
 
 .bc-data-series-stacked-negative {
   @extend .bc-data-series-stacked;
+  order: -1;
 }
 
 %bc-data-value {
@@ -134,15 +165,17 @@
 
   & > h6 {
     text-align:center;
+    font-size: 14px;
+    font-weight: 500;
     margin: 0;
-    padding: 10px;
+    padding: 0 10px;
   }
 
   & > ul {
     list-style: none;
     display: flex;
     margin: 0;
-    padding: 0;
+    padding: 10px 0;
 
     & li {
       flex-grow: 1;

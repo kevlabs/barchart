@@ -119,26 +119,43 @@
 
 
 <!-- FINAL PROTOTYPE BELOW -->
-<div class="bc-chart-area">
+<div class="bc-chart-area" style="width: 400px; height: 300px;">
   <h5 class="bc-title">TITLE</h5>
   <div class="bc-body-grid">
     <section class="bc-y-axis">
-      <h6>X-Axis Label</h6>
+      <h6>Y-Axis Label</h6>
       <ul>
+        <li>8</li><!-- +++ -->
+        <li>7</li><!-- +++ -->
+        <li>6</li><!-- +++ -->
+        <li>5</li><!-- +++ -->
+        <li>4</li><!-- +++ -->
         <li>3</li><!-- +++ -->
         <li>2</li><!-- +++ -->
         <li>1</li><!-- +++ -->
         <li>0</li><!-- +++ -->
+        <li>-1</li><!-- +++ -->
       </ul>
     </section>
-    <div class="bc-plot-area">
+    <div class="bc-plot-area-wrapper">
       <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-data-group-inline"><!-- +++ || bc-data-group-stacked -->
-        <div class="bc-data-series-inline"><data class="bc-data-value-middle" value="80" style="height: 80%; bottom: 10%;">80</data></div><!-- +++ -->
-      </div>
-      <div class="bc-data-group-stacked"><!-- +++ -->
-        <div class="bc-data-series-stacked"><data class="bc-data-value-top" value="50" style="height: 50%; bottom: 10%;">50</data></div><!-- +++ -->
-        <div class="bc-data-series-stacked-negative"><data class="bc-data-value-top" value="-10" style="height: 10%; bottom: 0;">-10</data></div>
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-grid-line-origin"></div><!-- ZERO LINE -->
+      <div class="bc-grid-line"></div><!-- +++ -->
+      <div class="bc-plot-area">
+        <div class="bc-data-group-inline"><!-- +++ || bc-data-group-stacked -->
+          <div class="bc-data-series-inline" style="height: 80%; bottom: 10%;"><data class="bc-data-value-middle" value="80">80</data></div><!-- +++ -->
+        </div>
+        <div class="bc-data-group-stacked"><!-- +++ -->
+          <div class="bc-data-series-stacked" style="height: 50%; bottom: 0%; background-color: #00F"><data class="bc-data-value-top" value="50">50</data></div><!-- +++ all entries to have the same bottom attr-->
+          <div class="bc-data-series-stacked-negative" style="height: 10%; bottom: 0;"><data class="bc-data-value-top" value="-10">-10</data></div>
+        </div>
       </div>
     </div>
     <section class="bc-x-axis">
@@ -146,7 +163,7 @@
         <li>group 1</li><!-- +++ -->
         <li>group 2</li><!-- +++ -->
       </ul>
-      <h6>Y-Axis Label</h6>
+      <h6>X-Axis Label</h6>
     </section>
   </div>
 </div>

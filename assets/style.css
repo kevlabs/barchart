@@ -1,14 +1,22 @@
 .bc-chart-area {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   min-width: 400px;
   min-height: 300px;
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  border: 2px solid #000;
+  padding: 10px;
 }
 
 .bc-title {
   display: block;
   text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
   margin: 0;
   padding: 10px;
 }
@@ -18,7 +26,7 @@
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr auto;
-  grid-template-areas: "y-axis chart-area" ". x-axis";
+  grid-template-areas: "y-axis plot-area" ". x-axis";
   justify-content: stretch;
 }
 
@@ -30,52 +38,71 @@
   writing-mode: vertical-rl;
   text-align: center;
   transform: rotate(180deg);
+  font-size: 14px;
+  font-weight: 500;
   margin: 0;
-  padding: 10px;
+  padding: 10px 0;
 }
 .bc-y-axis > ul {
   display: flex;
   flex-direction: column;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 10px;
 }
 .bc-y-axis > ul li {
   flex-grow: 1;
-  display: block;
-  position: relative;
-  padding: 0 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  transform: translate(0, 35%);
+  padding: 0;
 }
-.bc-y-axis > ul li ::after {
+
+.bc-plot-area-wrapper {
+  grid-area: plot-area;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #000;
+}
+
+.bc-grid-line, .bc-grid-line-origin {
+  flex-grow: 1;
+  position: relative;
+  margin-top: -10px;
+  border-bottom: 1px dashed #EEE;
+}
+.bc-grid-line::before, .bc-grid-line-origin::before {
   position: absolute;
-  bottom: 1px;
-  right: 0;
+  bottom: -1px;
+  left: -5px;
   width: 5px;
   height: 1px;
   background-color: #000;
   content: "";
 }
 
+.bc-grid-line-origin {
+  border-bottom: 1px solid #000;
+}
+
 .bc-plot-area {
-  grid-area: chart-area;
-  position: relative;
-  display: flex;
-  border-left: 1px solid #000;
-}
-
-.bc-grid-line {
   position: absolute;
-  top: calc(10% - 1px);
+  bottom: 1px;
   width: 100%;
-  z-index: -1;
-  border-bottom: 1px dashed #EEE;
+  height: 100%;
+  display: flex;
 }
 
-.bc-data-group-inline, .bc-data-group-stacked {
+.bc-data-group-stacked, .bc-data-group-inline {
   flex-grow: 1;
   display: flex;
-  align-items: flex-end;
   margin: 0 10px;
+}
+
+.bc-data-group-inline {
+  align-items: flex-end;
 }
 
 .bc-data-group-stacked {
@@ -91,6 +118,10 @@
 
 .bc-data-series-inline {
   flex-grow: 1;
+}
+
+.bc-data-series-stacked-negative {
+  order: -1;
 }
 
 .bc-data-value-bottom, .bc-data-value-middle, .bc-data-value-top {
@@ -118,14 +149,16 @@
 }
 .bc-x-axis > h6 {
   text-align: center;
+  font-size: 14px;
+  font-weight: 500;
   margin: 0;
-  padding: 10px;
+  padding: 0 10px;
 }
 .bc-x-axis > ul {
   list-style: none;
   display: flex;
   margin: 0;
-  padding: 0;
+  padding: 10px 0;
 }
 .bc-x-axis > ul li {
   flex-grow: 1;
