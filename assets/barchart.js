@@ -175,16 +175,8 @@ class BarChart {
     this.data = JSON.parse(JSON.stringify(data));
     this.options = JSON.parse(JSON.stringify(options));
 
-    //start rendering chart
-    //set chart type - might move to a parent function
-    this.chartType = this.options.type === 'inline' || this.options.type === 'stacked' ? this.options.type : 'inline';
-
-    this._calcYAxisData();
-    this._renderPlotArea();
-
-
-
-
+    //render chart
+    this._renderChartArea(container);
 
   }
 
@@ -240,10 +232,15 @@ class BarChart {
   static validateOptionsInput(options) {
     try {
       //CHECK OPTIONS OBJECT
-      //check title.label
+      //check chart.type
       if (typeof options !== 'object' || Object.getPrototypeOf(options) !== Object.prototype) {
         throw 'Options input is not an object!';
-      } else if (typeof options.title !== 'object' || Object.getPrototypeOf(options.title) !== Object.prototype || (typeof options.title.label !== 'string' && typeof options.title.label !== 'number')) {
+      } else if (typeof options.chart !== 'object' || Object.getPrototypeOf(options.chart) !== Object.prototype || !(['stacked', 'inline'].includes(options.chart.type))) {
+        throw 'The options.chart property is either missing, is not an object or does not include a valid "type" properties. Acceptable options.chart.type values are "stacked" and "inline".';
+      }
+
+      //check title.label
+      if (typeof options.title !== 'object' || Object.getPrototypeOf(options.title) !== Object.prototype || (typeof options.title.label !== 'string' && typeof options.title.label !== 'number')) {
         throw 'The options.title property is either missing, is not an object or does not include a string/number as its label.';
       }
 
@@ -282,27 +279,36 @@ class BarChart {
   static sanitizeFontFamily(family) {
     if (typeof family !== 'string') { return false; }
     family = family.replace(/(\\)|(['"])/g, (match, slash, quote) => slash ? '' : '\\' + quote );
-    return /^[a-zA-Z,'"\\\s]+$/.test(family) ? family[0] : false;
+    return /^[a-zA-Z,'"-\\\s]+$/.test(family) ? family : false;
   }
   static sanitizeFontWeight(weight) {
     if (typeof weight !== 'string' && typeof weight !== 'number') { return false; }
     return /^([1-9]0{2}|normal|bold|bold|light|lighter)$/.test(weight.toString()) ? weight : false;
   }
-  convertDataPoint() {
-    //options.yAxis.unit.base
-    //data.series.data
+  static sanitizeVAlignment(align) {
+    if (typeof align !== 'string') { return false; }
+    return /^(top|middle|bottom)$/.test(align.toString()) ? align : false;
+  }
+  static sanitizeHAlignment(align) {
+    if (typeof align !== 'string') { return false; }
+    return /^(top|middle|center)$/.test(align.toString()) ? align : false;
+  }
+  static sanitizeTopBottom(string) {
+    if (typeof string !== 'string') { return false; }
+    return /^(top|bottom)$/.test(string.toString()) ? string : false;
   }
 
   _calcYAxisData() {
 
     const dataPoints = [];
-    if (this.chartType === 'stacked') { this.groupStackedNegative = []; }
+    if (this.options.chart.type === 'stacked') { this.groupStackedNegative = []; }
+    let seriesMinMax;
 
     //calculate min and max values
     for (let i = 0; i < this.data.groups.length; i++) {
-      if (this.chartType === 'stacked') { const seriesMinMax = [0, 0]; }
+      if (this.options.chart.type === 'stacked') { seriesMinMax = [0, 0]; }
       for (let j = 0; j < this.data.series.length; j++) {
-        if (this.chartType === 'stacked') {
+        if (this.options.chart.type === 'stacked') {
           if (this.data.series[j].data[i] < 0) {
             seriesMinMax[0] += this.data.series[j].data[i];
           } else {
@@ -312,7 +318,7 @@ class BarChart {
           dataPoints.push(this.data.series[j].data[i]);
         }
       }
-      if (this.chartType === 'stacked') {
+      if (this.options.chart.type === 'stacked') {
         this.groupStackedNegative.push(Math.round(seriesMinMax[0] * 10000) / 10000);
         dataPoints.push(...seriesMinMax);
       }
@@ -327,32 +333,70 @@ class BarChart {
     this.maxTickBase = Math.max(Math.ceil(this.maxVal / this.options.yAxis.unit.step) * this.stepBase, 0);
     this.spanBase = this.maxTickBase - this.minTickBase;
     this.numTick = 1 + this.spanBase / this.stepBase;
+    this.spanBase = this.spanBase / this.numTick * (this.numTick + 1);
+  }
+
+  _renderYAxis(chartArea) {
+
+    this._calcYAxisData();
+
+    const wrapperElem = document.createElement('div');
+    wrapperElem.classList.add('bc-y-axis');
+
+    //render heading
+    const headingElem = document.createElement('h6');
+    headingElem.innerHTML = this.options.yAxis.label;
+
+    //heading font
+    if (typeof this.options.yAxis.font === 'object' && Object.getPrototypeOf(this.options.yAxis.font) === Object.prototype) {
+      headingElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.yAxis.font.family);
+      headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.yAxis.font.weight);
+      headingElem.style.fontSize = BarChart.sanitizeSize(this.options.yAxis.font.size);
+      headingElem.style.color = BarChart.sanitizeColor(this.options.yAxis.font.color);
+    }
+
+    wrapperElem.append(headingElem);
+
+    //render tick labels
+    const labelWrapperElem = document.createElement('ul');
+    for (let i = 0, val = this.maxTickBase; i < this.numTick; i++) {
+      const labelElem = document.createElement('li');
+      labelElem.innerHTML = val;
+      labelWrapperElem.append(labelElem);
+      val -= this.stepBase;
+    }
+    wrapperElem.append(labelWrapperElem);
+
+    //append to chart area
+    chartArea.append(wrapperElem);
+
   }
 
   _renderDataPoints(groups) {
 
     //determine vertical align of value within bar
-    const valVerticalAlign = typeof this.options.valueVerticalAlignment === 'string' && /top|middle|bottom/.test(this.options.valueVerticalAlignment) ? this.options.valueVerticalAlignment : 'middle';
+    const valVerticalAlign = BarChart.sanitizeVAlignment(this.options.chart.valueVerticalAlignment) || 'middle';
 
     //append data points to groups
-    this.data.series.forEach( ({data: series, backgroundColor}) => {
+    this.data.series.forEach( ({data: series, color, backgroundColor}) => {
       series.forEach( (dataPoint, i) => {
         const dataValBase = Math.round(dataPoint / this.options.yAxis.unit.base * 100) / 100;
 
         //create bar div elem
         const barDivElem = document.createElement('div');
-        barDivElem.classList.add(`bc-data-series-${this.chartType}`);
-        barDivElem.style.height = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 100000 + '%';
+        barDivElem.classList.add(`bc-data-series-${this.options.chart.type}`);
+        barDivElem.style.height = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 1000 + '%';
         //set bottom
-        barDivElem.style.bottom = Math.round((Math.min(this.chartType === 'inline' ? dataValBase : this.groupStackedNegative[i], 0) - this.minTickBase) / this.spanBase * 100000) / 100000 + 'px';
+        barDivElem.style.bottom = Math.round((Math.min(this.options.chart.type === 'inline' ? dataValBase : this.groupStackedNegative[i], 0) - this.minTickBase) / this.spanBase * 100000) / 100000 + 'px';
         //set background-color
-        barDivElem.style.backgroundColor = backgroundColor;
+        barDivElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
 
         //create inner data elem
         const barDataElem = document.createElement('data');
         barDataElem.classList.add(`bc-data-value-${valVerticalAlign}`);
         barDataElem.setAttribute('value', dataValBase);
         barDataElem.innerHTML = dataValBase;
+        barDataElem.style.color = BarChart.sanitizeColor(color);
         barDivElem.append(barDataElem);
 
         //append to div to group
@@ -367,7 +411,7 @@ class BarChart {
     //return an array of data-group containers
     const groups = this.data.groups.map( (group) => {
       const elem = document.createElement('div');
-      elem.classList.add(`bc-data-group-${this.chartType}`);
+      elem.classList.add(`bc-data-group-${this.options.chart.type}`);
       plotArea.append(elem);
       return elem;
     } );
@@ -376,7 +420,7 @@ class BarChart {
 
   }
 
-  _renderPlotArea() {
+  _renderPlotArea(chartArea) {
 
     //render wrapper div
     const wrapperElem = document.createElement('div');
@@ -395,6 +439,92 @@ class BarChart {
     divElem.classList.add('bc-plot-area');
     this._renderDataGroups(divElem);
     wrapperElem.append(divElem);
+
+    //append to chart area
+    chartArea.append(wrapperElem);
+
+  }
+
+  _renderXAxis(chartArea) {
+    const wrapperElem = document.createElement('div');
+    wrapperElem.classList.add('bc-x-axis');
+
+    //render tick labels
+    const labelWrapperElem = document.createElement('ul');
+    this.data.groups.forEach( (group) => {
+      const labelElem = document.createElement('li');
+      labelElem.innerHTML = group;
+      labelWrapperElem.append(labelElem);
+    } );
+    wrapperElem.append(labelWrapperElem);
+
+    //render heading
+    const headingElem = document.createElement('h6');
+    headingElem.innerHTML = this.options.xAxis.label;
+
+    //heading font
+    if (typeof this.options.xAxis.font === 'object' && Object.getPrototypeOf(this.options.xAxis.font) === Object.prototype) {
+      headingElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.xAxis.font.family);
+      headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.xAxis.font.weight);
+      headingElem.style.fontSize = BarChart.sanitizeSize(this.options.xAxis.font.size);
+      headingElem.style.color = BarChart.sanitizeColor(this.options.xAxis.font.color);
+    }
+
+    wrapperElem.append(headingElem);
+
+    //append to chart area
+    chartArea.append(wrapperElem);
+
+  }
+
+  _renderChartArea(chartContainer) {
+
+    const chartAreaElem = document.createElement('div');
+    chartAreaElem.classList.add('bc-chart-area');
+
+    //set user-defined style
+    //title top/bottom
+    if (BarChart.sanitizeTopBottom(this.options.title.verticalAlignment) === 'bottom') { chartAreaElem.style.flexDirection = 'column-reverse'; }
+
+    //width + height
+    chartAreaElem.style.width = BarChart.sanitizeSize(this.options.chart.width);
+    chartAreaElem.style.height = BarChart.sanitizeSize(this.options.chart.height);
+
+    //font
+    if (typeof this.options.chart.font === 'object' && Object.getPrototypeOf(this.options.chart.font) === Object.prototype) {
+      chartAreaElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.chart.font.family);
+      chartAreaElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.chart.font.weight);
+      chartAreaElem.style.fontSize = BarChart.sanitizeSize(this.options.chart.font.size);
+      chartAreaElem.style.color = BarChart.sanitizeColor(this.options.chart.font.color);
+    }
+
+    //CHART TITLE
+    const headingElem = document.createElement('h5');
+    headingElem.classList.add('bc-title');
+    headingElem.innerHTML = this.options.title.label;
+
+    //title font
+    if (typeof this.options.title.font === 'object' && Object.getPrototypeOf(this.options.title.font) === Object.prototype) {
+      headingElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.title.font.family);
+      headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.title.font.weight);
+      headingElem.style.fontSize = BarChart.sanitizeSize(this.options.title.font.size);
+      headingElem.style.color = BarChart.sanitizeColor(this.options.title.font.color);
+      console.log(BarChart.sanitizeColor(this.options.title.font.color));
+
+    }
+
+    chartAreaElem.append(headingElem);
+
+    const chartGridElem = document.createElement('div');
+    chartGridElem.classList.add('bc-body-grid');
+    chartAreaElem.append(chartGridElem);
+
+    this._renderYAxis(chartGridElem);
+    this._renderPlotArea(chartGridElem);
+    this._renderXAxis(chartGridElem);
+
+    //append to container
+    chartContainer.append(chartAreaElem);
 
   }
 
