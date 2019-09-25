@@ -288,8 +288,8 @@
   }
 
   & > ul {
-    list-style: none;
     display: flex;
+    list-style: none;
     margin: 0;
     padding: 10px 0;
 
@@ -315,4 +315,29 @@
     transform: translate(-50%, 0);
   }
 
+}
+
+.bc-legend {
+  grid-area: legend;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  background-color: #EEE;
+  margin: 10px 0 0 0;
+  padding: 0 5px;
+}
+
+.bc-legend-item {
+  flex-grow: 1;
+  width: 25%;
+  min-width: 100px;
+  padding: 5px;
+}
+
+.bc-legend-item-square {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #DDD; //default colour for series
+  margin-right: 5px;
 }

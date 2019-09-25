@@ -320,6 +320,30 @@ class BarChart {
 
   }
 
+  _renderLegend(chartArea) {
+    const wrapperElem = document.createElement('ul');
+    wrapperElem.classList.add('bc-legend');
+
+    this.data.series.forEach( ({label, backgroundColor}) => {
+      //create legend list item
+      const itemElem = document.createElement('li');
+      itemElem.classList.add('bc-legend-item');
+      //add color square
+      const itemSquareElem = document.createElement('div');
+      itemSquareElem.classList.add('bc-legend-item-square');
+      itemSquareElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
+      itemElem.append(itemSquareElem);
+      //add item text
+      itemElem.append(label);
+      //attach to legend node
+      wrapperElem.append(itemElem);
+    } );
+
+    //append to chart area
+    chartArea.append(wrapperElem);
+
+  }
+
   _renderChartArea(chartContainer) {
 
     const chartAreaElem = document.createElement('div');
@@ -365,6 +389,7 @@ class BarChart {
     this._renderYAxis(chartGridElem);
     this._renderPlotArea(chartGridElem);
     this._renderXAxis(chartGridElem);
+    this._renderLegend(chartGridElem);
 
     //append to container
     chartContainer.append(chartAreaElem);
