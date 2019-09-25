@@ -201,77 +201,71 @@
   flex-direction: row;
 }
 
-.bc-data-series-stacked {
+%bc-data-series {
   position: relative;
+  display: flex;
   background-color: #DDD; // default, user-defined
   transition: all 0.3s ease-out;
 
   &:hover {
+    color: #FFF !important;
     background-color: #BBB !important;
-
-    & > data {
-      color: #FFF !important;
-    }
   }
 }
 
 .bc-data-series-inline {
-  @extend .bc-data-series-stacked;
+  @extend %bc-data-series;
   flex-grow: 1;
   width: 0;
 }
 
+.bc-data-series-stacked {
+  @extend %bc-data-series;
+}
+
 .bc-data-series-stacked-negative {
-  @extend .bc-data-series-stacked;
+  @extend %bc-data-series;
   order: -1;            //so that negative value show at bottom of stack below origin line
 }
 
 %bc-data-value-vertical {
-  position: absolute;
-  left: 50%;
-  transition: all 0.3s ease-out;
+  justify-content: center;
+  padding: 5px 0;
 }
 
 .bc-data-value-top-vertical {
   @extend %bc-data-value-vertical;
-  top: 5px;
-  transform: translate(-50%, 0);
+  align-items: flex-start;
 }
 
 .bc-data-value-middle-vertical {
   @extend %bc-data-value-vertical;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  align-items: center;
 }
 
 .bc-data-value-bottom-vertical {
   @extend %bc-data-value-vertical;
-  bottom: 5px;
-  transform: translate(-50%, 0);
+  align-items: flex-end;
 }
 
 %bc-data-value-horizontal {
-  position: absolute;
-  top: 50%;
-  transition: all 0.3s ease-out;
-}
-
-.bc-data-value-right-horizontal { //equivalent to top for vertical
-  @extend %bc-data-value-horizontal;
-  right: 5px;
-  transform: translate(0, -50%);
-}
-
-.bc-data-value-center-horizontal {
-  @extend %bc-data-value-horizontal;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  align-items: center;
+  padding: 0 5px;
 }
 
 .bc-data-value-left-horizontal { //equivalent to bottom for vertical
   @extend %bc-data-value-horizontal;
-  left: 5px;
-  transform: translate(0, -50%);
+  justify-content: flex-start;
+}
+
+.bc-data-value-center-horizontal {
+  @extend %bc-data-value-horizontal;
+  justify-content: center;
+}
+
+.bc-data-value-right-horizontal { //equivalent to top for vertical
+  @extend %bc-data-value-horizontal;
+  justify-content: flex-end;
 }
 
 %bc-horizontal-axis {
@@ -340,4 +334,47 @@
   height: 10px;
   background-color: #DDD; //default colour for series
   margin-right: 5px;
+}
+
+
+.bc-info-window {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 50%;
+  width: 140px;
+  transform: translate(50%, 0);
+  color: #000;
+  background-color: #FFF;
+  box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, .3);
+  border-radius: 4px;
+  padding: 5px;
+  z-index: 1;
+
+  &:after {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 0;
+    transform: translate(-50%, 0);
+    border-top: 10px solid #AAA;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    content: '';
+  }
+}
+
+.bc-info-window-series {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.bc-info-window-group {
+  font-size: 1.05em;
+  font-weight: bold;
+  margin: 0 0 5px 5px;
+}
+
+.bc-info-window-value {
+  margin-left: 10px;
 }

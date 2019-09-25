@@ -219,23 +219,26 @@ class BarChart {
 
         //create bar div elem
         const barDivElem = document.createElement('div');
-        barDivElem.classList.add(`bc-data-series-${this.options.chart.type + (this.options.chart.type === 'stacked' && dataValBase < 0 ? '-negative' : '')}`);
+        barDivElem.classList.add(`bc-data-series-${this.options.chart.type + (this.options.chart.type === 'stacked' && dataValBase < 0 ? '-negative' : '')}`, `bc-data-value-${valAlign}-${this.options.chart.direction}`);
+
         //set height/width of bar
         barDivElem.style[this.options.chart.direction === 'vertical' ? 'height' : 'width'] = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 1000 + '%';
+
         //set offset from x-axis
         barDivElem.style[this.options.chart.direction === 'vertical' ? 'bottom' : 'left'] = Math.round((Math.min(this.options.chart.type === 'inline' ? dataValBase : this.groupStackedNegativeBase[i], 0) - this.minTickBase) / this.spanBase * 100000) / 1000 + '%';
-        //set background-color
+
+        //set color styles
+        barDivElem.style.color = BarChart.sanitizeColor(color);
         barDivElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
 
-        //create inner data elem
-        const barDataElem = document.createElement('data');
-        barDataElem.classList.add(`bc-data-value-${valAlign}-${this.options.chart.direction}`);
-        barDataElem.setAttribute('value', dataValBase);
-        barDataElem.setAttribute('data-series', label);
-        barDataElem.setAttribute('data-group', groups[i].getAttribute('data-group'));
-        barDataElem.innerHTML = Math.round(dataValBase);
-        barDataElem.style.color = BarChart.sanitizeColor(color);
-        barDivElem.append(barDataElem);
+        //set data attributes and innerText
+        barDivElem.setAttribute('data-value', dataValBase);
+        barDivElem.setAttribute('data-series', label);
+        barDivElem.setAttribute('data-group', groups[i].getAttribute('data-group'));
+        barDivElem.innerHTML = Math.round(dataValBase);
+
+        //attach event listener for info window
+        barDivElem.addEventListener('mouseenter', this._renderInfoWindow());
 
         //append to div to group
         groups[i].append(barDivElem);
@@ -251,6 +254,7 @@ class BarChart {
       const elem = document.createElement('div');
       elem.classList.add(`bc-data-group-${this.options.chart.type}-${this.options.chart.direction}`);
       elem.setAttribute('data-group', group);
+
       //set space between groups
       elem.style[this.options.chart.direction === 'vertical' ? 'marginLeft' : 'marginTop'] = BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5);
       elem.style[this.options.chart.direction === 'vertical' ? 'marginRight' : 'marginBottom'] = BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5);
@@ -328,19 +332,71 @@ class BarChart {
       //create legend list item
       const itemElem = document.createElement('li');
       itemElem.classList.add('bc-legend-item');
+
       //add color square
       const itemSquareElem = document.createElement('div');
       itemSquareElem.classList.add('bc-legend-item-square');
       itemSquareElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
       itemElem.append(itemSquareElem);
+
       //add item text
       itemElem.append(label);
+
       //attach to legend node
       wrapperElem.append(itemElem);
     } );
 
     //append to chart area
     chartArea.append(wrapperElem);
+
+  }
+
+  _renderInfoWindow() {
+    //function factory. To be called when supplied to event handler
+
+    //create info window HTMLElement if does not already exist
+    if (!this.infoWindow) {
+      this.infoWindow = document.createElement('div');
+      this.infoWindow.classList.add('bc-info-window');
+
+      //add series label div
+      const seriesElem = document.createElement('div');
+      seriesElem.classList.add('bc-info-window-series');
+      this.infoWindow.append(seriesElem);
+      //add group label div
+      const groupElem = document.createElement('div');
+      groupElem.classList.add('bc-info-window-group');
+      this.infoWindow.append(groupElem);
+      //add group label div
+      const valueElem = document.createElement('div');
+      valueElem.classList.add('bc-info-window-value');
+      this.infoWindow.append(valueElem);
+    }
+
+    //return arrow function so value of this is locked.
+    //can call event target with e.currentTarget
+    return (e) => {
+
+      const elem = e.currentTarget;
+
+      if (this.infoWindow.parentNode !== e.currentTarget) {
+
+        //fill in HTML Elements
+        this.infoWindow.querySelector('.bc-info-window-series').innerHTML = `Series: ${elem.getAttribute('data-series')}`;
+        this.infoWindow.querySelector('.bc-info-window-group').innerHTML = `Group: ${elem.getAttribute('data-group')}`;
+        this.infoWindow.querySelector('.bc-info-window-value').innerHTML = `Value: ${elem.getAttribute('data-value')}`;
+
+        //add event listener to deal with remove info window when out of bar
+        elem.addEventListener('mouseout', this._renderInfoWindow() );
+
+        elem.append(this.infoWindow);
+
+      } else {
+        elem.removeChild(this.infoWindow);
+      }
+
+      return false;
+    }
 
   }
 
@@ -376,8 +432,6 @@ class BarChart {
       headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.title.font.weight);
       headingElem.style.fontSize = BarChart.sanitizeSize(this.options.title.font.size);
       headingElem.style.color = BarChart.sanitizeColor(this.options.title.font.color);
-      console.log(BarChart.sanitizeColor(this.options.title.font.color));
-
     }
 
     chartAreaElem.append(headingElem);
