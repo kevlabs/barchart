@@ -2,9 +2,10 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column; // change to column-reverse if title to be displayed below chart
-  min-width: 400px; // default
-  min-height: 300px; // default
-  font-family: Arial, Helvetica, sans-serif; // default
+  width: 100%; // default
+  height: 500px; // default
+  background-color: #FFF;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif; // default
   font-size: 12px;
   font-weight: 300;
   border: 2px solid #000;
@@ -27,13 +28,14 @@
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    'y-axis plot-area'
-    '. x-axis';
+    'vertical-axis plot-area'
+    '. horizontal-axis'
+    'legend legend';
   justify-content: stretch;
 }
 
-.bc-y-axis {
-  grid-area: y-axis;
+%bc-vertical-axis {
+  grid-area: vertical-axis;
   display: flex;
 
   & > h6 {
@@ -48,120 +50,234 @@
 
   & > ul {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     list-style: none;
     margin: 0;
     padding: 0 10px;
 
     & li {
       flex-grow: 1;
+      height: 0;
       display: flex;
       justify-content: flex-end;
-      align-items: flex-end;
-      transform: translate(0, 35%);
+      align-items: center;
       padding: 0;
     }
 
   }
 }
 
-.bc-plot-area-wrapper {
+.bc-y-axis-vertical {
+  @extend %bc-vertical-axis;
+  & > ul li {
+    transform: translate(0, 50%);
+  }
+}
+
+.bc-x-axis-horizontal {
+  @extend %bc-vertical-axis;
+  & > ul li {
+    margin: 10px 0;
+  }
+}
+
+%bc-plot-area-wrapper {
   grid-area: plot-area;
   position: relative;
   display: flex;
+}
+
+.bc-plot-area-wrapper-vertical {
+  @extend %bc-plot-area-wrapper;
   flex-direction: column;
   border-left: 1px solid #000;
 }
 
+.bc-plot-area-wrapper-horizontal {
+  @extend %bc-plot-area-wrapper;
+  flex-direction: row-reverse;
+  border-bottom: 1px solid #000;
+}
 
-.bc-grid-line {
+
+%bc-grid-line {
   flex-grow: 1;
   position: relative;
-  margin-top: -10px;
-  border-bottom: 1px dashed #EEE;
 
   &::before {
     position: absolute;
-    bottom: -1px;;
-    left: -5px;
-    width: 5px;
-    height: 1px;
     background-color: #000;
     content: '';
   }
 }
 
-.bc-grid-line-origin {
-  @extend .bc-grid-line;
+.bc-grid-line-vertical {
+  @extend %bc-grid-line;
+  border-bottom: 1px dashed #EEE;
+
+  &::before {
+    bottom: -1px;;
+    left: -5px;
+    width: 5px;
+    height: 1px;
+  }
+}
+
+.bc-grid-line-horizontal {
+  @extend %bc-grid-line;
+  border-left: 1px dashed #EEE;
+
+  &::before {
+    left: -1px;;
+    bottom: -5px;
+    height: 5px;
+    width: 1px;
+  }
+}
+
+.bc-grid-line-origin-vertical {
+  @extend .bc-grid-line-vertical;
   border-bottom: 1px solid #000;
 }
 
-.bc-plot-area {
+.bc-grid-line-origin-horizontal {
+  @extend .bc-grid-line-horizontal;
+  border-left: 1px solid #000;
+}
+
+%bc-plot-area {
   position: absolute;
-  bottom: 1px;
   width: 100%;
   height: 100%;
   display: flex;
 }
 
+.bc-plot-area-vertical {
+  @extend %bc-plot-area;
+  bottom: 1px;
+}
+
+.bc-plot-area-horizontal {
+  @extend %bc-plot-area;
+  flex-direction: column-reverse;
+  left: 1px;
+}
+
 %bc-data-group {
   flex-grow: 1;
   display: flex;
+}
+
+%bc-data-group-vertical {
+  @extend %bc-data-group;
+  width: 0;
   margin: 0 10px; // user-defined - 10px = 0.5 * spaceBetween
 }
 
-.bc-data-group-inline {
-  @extend %bc-data-group;
+.bc-data-group-inline-vertical {
+  @extend %bc-data-group-vertical;
   align-items: flex-end;
 }
 
-.bc-data-group-stacked {
-  @extend %bc-data-group;
+.bc-data-group-stacked-vertical {
+  @extend %bc-data-group-vertical;
   flex-direction: column-reverse;
+}
+
+%bc-data-group-horizontal {
+  @extend %bc-data-group;
+  flex-direction: column;
+  height: 0;
+  margin: 10px 0; // user-defined - 10px = 0.5 * spaceBetween
+}
+
+.bc-data-group-inline-horizontal {
+  @extend %bc-data-group-horizontal;
+  justify-items: flex-start;
+}
+
+.bc-data-group-stacked-horizontal {
+  @extend %bc-data-group-horizontal;
+  flex-direction: row;
 }
 
 .bc-data-series-stacked {
   position: relative;
-  bottom: 10%; //based on data
-  height: 80%; //based on data
-  background-color: #AAA; // default, user-defined
+  background-color: #DDD; // default, user-defined
+  transition: all 0.3s ease-out;
+
+  &:hover {
+    background-color: #BBB !important;
+
+    & > data {
+      color: #FFF !important;
+    }
+  }
 }
 
 .bc-data-series-inline {
   @extend .bc-data-series-stacked;
   flex-grow: 1;
+  width: 0;
 }
 
 .bc-data-series-stacked-negative {
   @extend .bc-data-series-stacked;
-  order: -1;
+  order: -1;            //so that negative value show at bottom of stack below origin line
 }
 
-%bc-data-value {
+%bc-data-value-vertical {
   position: absolute;
   left: 50%;
+  transition: all 0.3s ease-out;
 }
 
-.bc-data-value-top {
-  @extend %bc-data-value;
+.bc-data-value-top-vertical {
+  @extend %bc-data-value-vertical;
   top: 5px;
   transform: translate(-50%, 0);
 }
 
-.bc-data-value-middle {
-  @extend %bc-data-value;
+.bc-data-value-middle-vertical {
+  @extend %bc-data-value-vertical;
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
-.bc-data-value-bottom {
-  @extend %bc-data-value;
+.bc-data-value-bottom-vertical {
+  @extend %bc-data-value-vertical;
   bottom: 5px;
   transform: translate(-50%, 0);
 }
 
-.bc-x-axis {
-  grid-area: x-axis;
+%bc-data-value-horizontal {
+  position: absolute;
+  top: 50%;
+  transition: all 0.3s ease-out;
+}
+
+.bc-data-value-right-horizontal { //equivalent to top for vertical
+  @extend %bc-data-value-horizontal;
+  right: 5px;
+  transform: translate(0, -50%);
+}
+
+.bc-data-value-center-horizontal {
+  @extend %bc-data-value-horizontal;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bc-data-value-left-horizontal { //equivalent to bottom for vertical
+  @extend %bc-data-value-horizontal;
+  left: 5px;
+  transform: translate(0, -50%);
+}
+
+%bc-horizontal-axis {
+  grid-area: horizontal-axis;
+  display: flex;
+  flex-direction: column-reverse;
 
   & > h6 {
     text-align:center;
@@ -179,9 +295,24 @@
 
     & li {
       flex-grow: 1;
-      display: inline-block;
-      margin: 0 10px;
-      text-align: center;
+      width: 0;
+      display: flex;
+      justify-content: center;
     }
   }
+}
+
+.bc-x-axis-vertical {
+  @extend %bc-horizontal-axis;
+  & > ul li {
+    margin: 0 10px;
+  }
+}
+
+.bc-y-axis-horizontal {
+  @extend %bc-horizontal-axis;
+  & > ul li {
+    transform: translate(-50%, 0);
+  }
+
 }

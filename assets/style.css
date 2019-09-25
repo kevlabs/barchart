@@ -2,9 +2,10 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  min-width: 400px;
-  min-height: 300px;
-  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  height: 500px;
+  background-color: #FFF;
+  font-family: "Open Sans", Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 300;
   border: 2px solid #000;
@@ -26,15 +27,15 @@
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: 1fr auto;
-  grid-template-areas: "y-axis plot-area" ". x-axis";
+  grid-template-areas: "vertical-axis plot-area" ". horizontal-axis" "legend legend";
   justify-content: stretch;
 }
 
-.bc-y-axis {
-  grid-area: y-axis;
+.bc-x-axis-horizontal, .bc-y-axis-vertical {
+  grid-area: vertical-axis;
   display: flex;
 }
-.bc-y-axis > h6 {
+.bc-x-axis-horizontal > h6, .bc-y-axis-vertical > h6 {
   writing-mode: vertical-rl;
   text-align: center;
   transform: rotate(180deg);
@@ -43,128 +44,226 @@
   margin: 0;
   padding: 10px 0;
 }
-.bc-y-axis > ul {
+.bc-x-axis-horizontal > ul, .bc-y-axis-vertical > ul {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   list-style: none;
   margin: 0;
   padding: 0 10px;
 }
-.bc-y-axis > ul li {
+.bc-x-axis-horizontal > ul li, .bc-y-axis-vertical > ul li {
   flex-grow: 1;
+  height: 0;
   display: flex;
   justify-content: flex-end;
-  align-items: flex-end;
-  transform: translate(0, 35%);
+  align-items: center;
   padding: 0;
 }
 
-.bc-plot-area-wrapper {
+.bc-y-axis-vertical > ul li {
+  transform: translate(0, 50%);
+}
+
+.bc-x-axis-horizontal > ul li {
+  margin: 10px 0;
+}
+
+.bc-plot-area-wrapper-horizontal, .bc-plot-area-wrapper-vertical {
   grid-area: plot-area;
   position: relative;
   display: flex;
+}
+
+.bc-plot-area-wrapper-vertical {
   flex-direction: column;
   border-left: 1px solid #000;
 }
 
-.bc-grid-line, .bc-grid-line-origin {
+.bc-plot-area-wrapper-horizontal {
+  flex-direction: row-reverse;
+  border-bottom: 1px solid #000;
+}
+
+.bc-grid-line-horizontal, .bc-grid-line-origin-horizontal, .bc-grid-line-vertical, .bc-grid-line-origin-vertical {
   flex-grow: 1;
   position: relative;
-  margin-top: -10px;
-  border-bottom: 1px dashed #EEE;
 }
-.bc-grid-line::before, .bc-grid-line-origin::before {
+.bc-grid-line-horizontal::before, .bc-grid-line-origin-horizontal::before, .bc-grid-line-vertical::before, .bc-grid-line-origin-vertical::before {
   position: absolute;
-  bottom: -1px;
-  left: -5px;
-  width: 5px;
-  height: 1px;
   background-color: #000;
   content: "";
 }
 
-.bc-grid-line-origin {
+.bc-grid-line-vertical, .bc-grid-line-origin-vertical {
+  border-bottom: 1px dashed #EEE;
+}
+.bc-grid-line-vertical::before, .bc-grid-line-origin-vertical::before {
+  bottom: -1px;
+  left: -5px;
+  width: 5px;
+  height: 1px;
+}
+
+.bc-grid-line-horizontal, .bc-grid-line-origin-horizontal {
+  border-left: 1px dashed #EEE;
+}
+.bc-grid-line-horizontal::before, .bc-grid-line-origin-horizontal::before {
+  left: -1px;
+  bottom: -5px;
+  height: 5px;
+  width: 1px;
+}
+
+.bc-grid-line-origin-vertical {
   border-bottom: 1px solid #000;
 }
 
-.bc-plot-area {
+.bc-grid-line-origin-horizontal {
+  border-left: 1px solid #000;
+}
+
+.bc-plot-area-horizontal, .bc-plot-area-vertical {
   position: absolute;
-  bottom: 1px;
   width: 100%;
   height: 100%;
   display: flex;
 }
 
-.bc-data-group-stacked, .bc-data-group-inline {
+.bc-plot-area-vertical {
+  bottom: 1px;
+}
+
+.bc-plot-area-horizontal {
+  flex-direction: column-reverse;
+  left: 1px;
+}
+
+.bc-data-group-stacked-horizontal, .bc-data-group-inline-horizontal, .bc-data-group-stacked-vertical, .bc-data-group-inline-vertical {
   flex-grow: 1;
   display: flex;
+}
+
+.bc-data-group-stacked-vertical, .bc-data-group-inline-vertical {
+  width: 0;
   margin: 0 10px;
 }
 
-.bc-data-group-inline {
+.bc-data-group-inline-vertical {
   align-items: flex-end;
 }
 
-.bc-data-group-stacked {
+.bc-data-group-stacked-vertical {
   flex-direction: column-reverse;
+}
+
+.bc-data-group-stacked-horizontal, .bc-data-group-inline-horizontal {
+  flex-direction: column;
+  height: 0;
+  margin: 10px 0;
+}
+
+.bc-data-group-inline-horizontal {
+  justify-items: flex-start;
+}
+
+.bc-data-group-stacked-horizontal {
+  flex-direction: row;
 }
 
 .bc-data-series-stacked, .bc-data-series-stacked-negative, .bc-data-series-inline {
   position: relative;
-  bottom: 10%;
-  height: 80%;
-  background-color: #AAA;
+  background-color: #DDD;
+  transition: all 0.3s ease-out;
+}
+.bc-data-series-stacked:hover, .bc-data-series-stacked-negative:hover, .bc-data-series-inline:hover {
+  background-color: #BBB !important;
+}
+.bc-data-series-stacked:hover > data, .bc-data-series-stacked-negative:hover > data, .bc-data-series-inline:hover > data {
+  color: #FFF !important;
 }
 
 .bc-data-series-inline {
   flex-grow: 1;
+  width: 0;
 }
 
 .bc-data-series-stacked-negative {
   order: -1;
 }
 
-.bc-data-value-bottom, .bc-data-value-middle, .bc-data-value-top {
+.bc-data-value-bottom-vertical, .bc-data-value-middle-vertical, .bc-data-value-top-vertical {
   position: absolute;
   left: 50%;
+  transition: all 0.3s ease-out;
 }
 
-.bc-data-value-top {
+.bc-data-value-top-vertical {
   top: 5px;
   transform: translate(-50%, 0);
 }
 
-.bc-data-value-middle {
+.bc-data-value-middle-vertical {
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
-.bc-data-value-bottom {
+.bc-data-value-bottom-vertical {
   bottom: 5px;
   transform: translate(-50%, 0);
 }
 
-.bc-x-axis {
-  grid-area: x-axis;
+.bc-data-value-left-horizontal, .bc-data-value-center-horizontal, .bc-data-value-right-horizontal {
+  position: absolute;
+  top: 50%;
+  transition: all 0.3s ease-out;
 }
-.bc-x-axis > h6 {
+
+.bc-data-value-right-horizontal {
+  right: 5px;
+  transform: translate(0, -50%);
+}
+
+.bc-data-value-center-horizontal {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bc-data-value-left-horizontal {
+  left: 5px;
+  transform: translate(0, -50%);
+}
+
+.bc-y-axis-horizontal, .bc-x-axis-vertical {
+  grid-area: horizontal-axis;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.bc-y-axis-horizontal > h6, .bc-x-axis-vertical > h6 {
   text-align: center;
   font-size: 14px;
   font-weight: 500;
   margin: 0;
   padding: 0 10px;
 }
-.bc-x-axis > ul {
+.bc-y-axis-horizontal > ul, .bc-x-axis-vertical > ul {
   list-style: none;
   display: flex;
   margin: 0;
   padding: 10px 0;
 }
-.bc-x-axis > ul li {
+.bc-y-axis-horizontal > ul li, .bc-x-axis-vertical > ul li {
   flex-grow: 1;
-  display: inline-block;
+  width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.bc-x-axis-vertical > ul li {
   margin: 0 10px;
-  text-align: center;
+}
+
+.bc-y-axis-horizontal > ul li {
+  transform: translate(-50%, 0);
 }
 
 /*# sourceMappingURL=style.css.map */

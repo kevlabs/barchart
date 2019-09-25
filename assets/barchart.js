@@ -1,169 +1,4 @@
-
-
-function drawBarChart(data, options, element) {
-
-
-};
-
-
-/*
-
-potential classes:
-- bar
-- group
-- chart-area
-- chart
-
-*/
-
-
-/*
-
-
-
-//API INTERFACE:
-The signature of the function should be as follows:
-
-drawBarChart(data, options, element);
-The data parameter will be the data the chart should work from Start with just an Array of numbers
-e.g. [1, 2, 3, 4, 5]
-
-The options parameter should be an object which has options for the chart.
-e.g. width and height of the bar chart
-
-The element parameter should be a DOM element or jQuery element that the chart will get rendered into.
-
-//STYLING:
-- Display a list of SINGLE values, horizontally as a bar chart:
-  ** Numerical values should also be DISPLAYED INSIDE of the bar
-  ** The POSITION of values should be customizable too: TOP, CENTRE or BOTTOM of the bar.
-- BAR WIDTH should be dependent on the total amount of values passed.
-- BAR HEIGHT should be dependent on the values of the data.
-- BAR PROPS that should be customizable:
-  ** Bar Colour
-  ** Label Colour
-  ** Bar spacing (space between bars)
-  ** Bar Chart axes
-- X-AXIS should show labels for each data value
-- Y-AXIS should show ticks at certain values
-- The TITLE of the bar chart:
-  ** should be able to be set and shown dynamically
-  ** should also be customizable:
-    Font Size
-    Font Colour
-
-*/
-
-
-
-
-/*
-INPUT SCHEMA
-
-
-*DATA
-//top level props:
-- group names
-
-//each data series need to have its props such as:
-  - name/label
-  - colour
-  -
-
-
-//e.g. evolution of NA's population 1970-2010
-// 5 data points
-const data = {
-  groups: [1971, 1981, 1991, 2001, 2011],
-  series: [
-    {
-      label: 'Canada',
-      data: [21962032, 24819915, 28037420, 31020596, 33476688],
-      backgroundColor: blue
-    },
-    {
-      label: 'Mexico',
-      data: [54669000, 71916000, 87890000, 105340000, 115683000],
-      backgroundColor: green
-    },
-    {
-      label: 'USA',
-      data: [206827000, 229466000, 252981000, 285082000, 311583000],
-      backgroundColor: red
-    }
-
-  ]
-
-};
-
-
-*OPTIONS
-- chart level options:
-  ** width
-  ** height
-  ** in-between group space
-  ** title name, font family, font colour, font size
-  ** value units (e.g. inhabitants)
-  ** y-axis: step (e.g. every 10,000)
-  ** stacked vs inline
-  ** font family, font colour, font size (maybe segregate between axis and group/data labels)
-
-
-const options = {
-  chart: {
-    height: '300',                      //in px - default in CSS
-    width: '400',                       //in px - default in CSS
-    type: 'inline',                     //inline, stacked
-    font: {                             //default in CSS
-      family: 'Arial, sans-serif',
-      size: '14px',                     //in px
-      color: '#000',
-      weight: 'bold'
-    }
-  },
-  title: {
-    label: 'Evolution of North America\'s Population',
-    verticalAlignment:'top',            //top, middle, bottom
-    font: {                             //if not supplied should default to top level
-      family: 'Arial, sans-serif',
-      size: '16px',
-      color: '#000',
-      weight: 'bold'
-    }
-  },
-  xAxis: {
-    label: 'Year',
-    groupSpaceBetween: '20px',
-    font: {                             //if not supplied should default to top level
-      family: 'Arial, sans-serif',
-      size: '16px',
-      color: '#000',
-      weight: 'bold'
-    }
-  }
-  yAxis: {
-    label: 'million inhabitants',
-    unit: {
-      base: 1000000,
-      step: 25000000
-    },
-    font: {                             //if not supplied should default to top level
-      family: 'Arial, sans-serif',
-      size: '16px',
-      color: '#000',
-      weight: 'bold'
-    }
-  }
-
-};
-
-
-CHART HTML
-
-
-
-*/
-
+//each bar chart will be an instance of the BarChart class
 class BarChart {
   constructor(data, options, container) {
 
@@ -235,8 +70,8 @@ class BarChart {
       //check chart.type
       if (typeof options !== 'object' || Object.getPrototypeOf(options) !== Object.prototype) {
         throw 'Options input is not an object!';
-      } else if (typeof options.chart !== 'object' || Object.getPrototypeOf(options.chart) !== Object.prototype || !(['stacked', 'inline'].includes(options.chart.type))) {
-        throw 'The options.chart property is either missing, is not an object or does not include a valid "type" properties. Acceptable options.chart.type values are "stacked" and "inline".';
+      } else if (typeof options.chart !== 'object' || Object.getPrototypeOf(options.chart) !== Object.prototype || !(['stacked', 'inline'].includes(options.chart.type)) || !(['vertical', 'horizontal'].includes(options.chart.direction))) {
+        throw 'The options.chart property is either missing, is not an object or does not include valid "type" or "direction" properties. Legal options.chart.type values are "stacked" and "inline" while legal options.chart.direction values are "horizontal" and "vertical".';
       }
 
       //check title.label
@@ -269,12 +104,12 @@ class BarChart {
   }
   static sanitizeColor(color) {
     if (typeof color !== 'string') { return false; }
-    return /^#[\da-fA-F]{3,6}$/.test(color) ? color : false;
+    return /^(#[\da-fA-F]{3,6}|rgb\((\s*(2([0-4]\d|5[0-5])|[0-1]?\d{1,2})\s*,){2}\s*(2([0-4]\d|5[0-5])|[0-1]?\d{1,2})\s*\))$/.test(color) ? color : false;
   }
-  static sanitizeSize(size) {
+  static sanitizeSize(size, multiplier = 1) {
     if (typeof size !== 'string' && typeof size !== 'number') { return false; }
     size = size.toString().match(/\d+/);
-    return size ? size[0] + 'px' : false;
+    return size ? size[0] * multiplier + 'px' : false;
   }
   static sanitizeFontFamily(family) {
     if (typeof family !== 'string') { return false; }
@@ -291,7 +126,7 @@ class BarChart {
   }
   static sanitizeHAlignment(align) {
     if (typeof align !== 'string') { return false; }
-    return /^(top|middle|center)$/.test(align.toString()) ? align : false;
+    return /^(left|center|right)$/.test(align.toString()) ? align : false;
   }
   static sanitizeTopBottom(string) {
     if (typeof string !== 'string') { return false; }
@@ -301,7 +136,7 @@ class BarChart {
   _calcYAxisData() {
 
     const dataPoints = [];
-    if (this.options.chart.type === 'stacked') { this.groupStackedNegative = []; }
+    if (this.options.chart.type === 'stacked') { this.groupStackedNegativeBase = []; }
     let seriesMinMax;
 
     //calculate min and max values
@@ -319,7 +154,7 @@ class BarChart {
         }
       }
       if (this.options.chart.type === 'stacked') {
-        this.groupStackedNegative.push(Math.round(seriesMinMax[0] * 10000) / 10000);
+        this.groupStackedNegativeBase.push(Math.round(seriesMinMax[0] / this.options.yAxis.unit.base * 100000) / 100000);
         dataPoints.push(...seriesMinMax);
       }
     }
@@ -341,7 +176,7 @@ class BarChart {
     this._calcYAxisData();
 
     const wrapperElem = document.createElement('div');
-    wrapperElem.classList.add('bc-y-axis');
+    wrapperElem.classList.add(`bc-y-axis-${this.options.chart.direction}`);
 
     //render heading
     const headingElem = document.createElement('h6');
@@ -359,11 +194,11 @@ class BarChart {
 
     //render tick labels
     const labelWrapperElem = document.createElement('ul');
-    for (let i = 0, val = this.maxTickBase; i < this.numTick; i++) {
+    for (let i = 0, val = this.minTickBase; i < this.numTick; i++) {
       const labelElem = document.createElement('li');
       labelElem.innerHTML = val;
       labelWrapperElem.append(labelElem);
-      val -= this.stepBase;
+      val += this.stepBase;
     }
     wrapperElem.append(labelWrapperElem);
 
@@ -375,27 +210,30 @@ class BarChart {
   _renderDataPoints(groups) {
 
     //determine vertical align of value within bar
-    const valVerticalAlign = BarChart.sanitizeVAlignment(this.options.chart.valueVerticalAlignment) || 'middle';
+    const valAlign = this.options.chart.direction === 'vertical' ? (BarChart.sanitizeVAlignment(this.options.chart.valueVerticalAlignment) || 'middle') : (BarChart.sanitizeHAlignment(this.options.chart.valueHorizontalAlignment) || 'center');
 
     //append data points to groups
-    this.data.series.forEach( ({data: series, color, backgroundColor}) => {
+    this.data.series.forEach( ({label, data: series, color, backgroundColor}) => {
       series.forEach( (dataPoint, i) => {
         const dataValBase = Math.round(dataPoint / this.options.yAxis.unit.base * 100) / 100;
 
         //create bar div elem
         const barDivElem = document.createElement('div');
-        barDivElem.classList.add(`bc-data-series-${this.options.chart.type}`);
-        barDivElem.style.height = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 1000 + '%';
-        //set bottom
-        barDivElem.style.bottom = Math.round((Math.min(this.options.chart.type === 'inline' ? dataValBase : this.groupStackedNegative[i], 0) - this.minTickBase) / this.spanBase * 100000) / 100000 + 'px';
+        barDivElem.classList.add(`bc-data-series-${this.options.chart.type + (this.options.chart.type === 'stacked' && dataValBase < 0 ? '-negative' : '')}`);
+        //set height/width of bar
+        barDivElem.style[this.options.chart.direction === 'vertical' ? 'height' : 'width'] = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 1000 + '%';
+        //set offset from x-axis
+        barDivElem.style[this.options.chart.direction === 'vertical' ? 'bottom' : 'left'] = Math.round((Math.min(this.options.chart.type === 'inline' ? dataValBase : this.groupStackedNegativeBase[i], 0) - this.minTickBase) / this.spanBase * 100000) / 1000 + '%';
         //set background-color
         barDivElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
 
         //create inner data elem
         const barDataElem = document.createElement('data');
-        barDataElem.classList.add(`bc-data-value-${valVerticalAlign}`);
+        barDataElem.classList.add(`bc-data-value-${valAlign}-${this.options.chart.direction}`);
         barDataElem.setAttribute('value', dataValBase);
-        barDataElem.innerHTML = dataValBase;
+        barDataElem.setAttribute('data-series', label);
+        barDataElem.setAttribute('data-group', groups[i].getAttribute('data-group'));
+        barDataElem.innerHTML = Math.round(dataValBase);
         barDataElem.style.color = BarChart.sanitizeColor(color);
         barDivElem.append(barDataElem);
 
@@ -411,7 +249,12 @@ class BarChart {
     //return an array of data-group containers
     const groups = this.data.groups.map( (group) => {
       const elem = document.createElement('div');
-      elem.classList.add(`bc-data-group-${this.options.chart.type}`);
+      elem.classList.add(`bc-data-group-${this.options.chart.type}-${this.options.chart.direction}`);
+      elem.setAttribute('data-group', group);
+      //set space between groups
+      elem.style[this.options.chart.direction === 'vertical' ? 'marginLeft' : 'marginTop'] = BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5);
+      elem.style[this.options.chart.direction === 'vertical' ? 'marginRight' : 'marginBottom'] = BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5);
+
       plotArea.append(elem);
       return elem;
     } );
@@ -424,19 +267,19 @@ class BarChart {
 
     //render wrapper div
     const wrapperElem = document.createElement('div');
-    wrapperElem.classList.add('bc-plot-area-wrapper');
+    wrapperElem.classList.add(`bc-plot-area-wrapper-${this.options.chart.direction}`);
 
     //render grid lines
     for (let i = 0, val = this.maxTickBase; i < this.numTick; i++) {
       const gridLineElem = document.createElement('div');
-      gridLineElem.classList.add(val ? 'bc-grid-line' : 'bc-grid-line-origin');
+      gridLineElem.classList.add(`${val ? 'bc-grid-line' : 'bc-grid-line-origin'}-${this.options.chart.direction}`);
       wrapperElem.append(gridLineElem);
       val -= this.stepBase;
     }
 
     //render plot area
     const divElem = document.createElement('div');
-    divElem.classList.add('bc-plot-area');
+    divElem.classList.add(`bc-plot-area-${this.options.chart.direction}`);
     this._renderDataGroups(divElem);
     wrapperElem.append(divElem);
 
@@ -447,16 +290,7 @@ class BarChart {
 
   _renderXAxis(chartArea) {
     const wrapperElem = document.createElement('div');
-    wrapperElem.classList.add('bc-x-axis');
-
-    //render tick labels
-    const labelWrapperElem = document.createElement('ul');
-    this.data.groups.forEach( (group) => {
-      const labelElem = document.createElement('li');
-      labelElem.innerHTML = group;
-      labelWrapperElem.append(labelElem);
-    } );
-    wrapperElem.append(labelWrapperElem);
+    wrapperElem.classList.add(`bc-x-axis-${this.options.chart.direction}`);
 
     //render heading
     const headingElem = document.createElement('h6');
@@ -471,6 +305,15 @@ class BarChart {
     }
 
     wrapperElem.append(headingElem);
+
+    //render tick labels
+    const labelWrapperElem = document.createElement('ul');
+    this.data.groups.forEach( (group) => {
+      const labelElem = document.createElement('li');
+      labelElem.innerHTML = group;
+      labelWrapperElem.append(labelElem);
+    } );
+    wrapperElem.append(labelWrapperElem);
 
     //append to chart area
     chartArea.append(wrapperElem);
@@ -530,3 +373,7 @@ class BarChart {
 
 }
 
+//BarChart API
+function drawBarChart(data, options, element) {
+  return new BarChart(data, options, element);
+};
