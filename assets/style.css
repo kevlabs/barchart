@@ -177,8 +177,8 @@
   transition: all 0.3s ease-out;
 }
 .bc-data-series-stacked-negative:hover, .bc-data-series-stacked:hover, .bc-data-series-inline:hover {
-  color: #FFF !important;
-  background-color: #BBB !important;
+  color: #AAA !important;
+  background-color: #DDD !important;
 }
 
 .bc-data-series-inline {

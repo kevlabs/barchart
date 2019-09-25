@@ -387,7 +387,7 @@ class BarChart {
         this.infoWindow.querySelector('.bc-info-window-value').innerHTML = `Value: ${elem.getAttribute('data-value')}`;
 
         //add event listener to deal with remove info window when out of bar
-        elem.addEventListener('mouseout', this._renderInfoWindow() );
+        elem.addEventListener('mouseleave', this._renderInfoWindow(), {once: true});
 
         elem.append(this.infoWindow);
 
