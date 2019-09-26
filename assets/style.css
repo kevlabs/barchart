@@ -11,6 +11,9 @@
   border: 2px solid #000;
   padding: 10px;
 }
+.bc-chart-area *, .bc-chart-area *::before, .bc-chart-area *::after {
+  box-sizing: border-box;
+}
 
 .bc-title {
   display: block;
@@ -18,7 +21,7 @@
   font-size: 20px;
   font-weight: 500;
   text-transform: uppercase;
-  margin: 0;
+  margin: 10px 0 5px;
   padding: 10px;
 }
 
@@ -26,7 +29,7 @@
   flex-grow: 1;
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr auto auto;
   grid-template-areas: "vertical-axis plot-area" ". horizontal-axis" "legend legend";
   justify-content: stretch;
 }
@@ -192,6 +195,8 @@
 
 .bc-data-value-bottom-vertical, .bc-data-value-middle-vertical, .bc-data-value-top-vertical {
   justify-content: center;
+}
+.bc-data-value-bottom-vertical > div:first-child, .bc-data-value-middle-vertical > div:first-child, .bc-data-value-top-vertical > div:first-child {
   padding: 5px 0;
 }
 
@@ -209,6 +214,8 @@
 
 .bc-data-value-right-horizontal, .bc-data-value-center-horizontal, .bc-data-value-left-horizontal {
   align-items: center;
+}
+.bc-data-value-right-horizontal > div:first-child, .bc-data-value-center-horizontal > div:first-child, .bc-data-value-left-horizontal > div:first-child {
   padding: 0 5px;
 }
 
@@ -263,7 +270,7 @@
   flex-wrap: wrap;
   list-style: none;
   background-color: #EEE;
-  margin: 10px 0 0 0;
+  margin: 10px 0 0;
   padding: 0 5px;
 }
 
@@ -316,11 +323,11 @@
 .bc-info-window-group {
   font-size: 1.05em;
   font-weight: bold;
-  margin: 0 0 5px 5px;
+  margin: 0 0 5px 3px;
 }
 
 .bc-info-window-value {
-  margin-left: 10px;
+  margin-left: 6px;
 }
 
 /*# sourceMappingURL=style.css.map */

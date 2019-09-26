@@ -4,170 +4,484 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Bar Chart Demo</title>
-  <script src="assets/barchart.js" defer></script>
+  <title>Bar Chart Demo Page</title>
+  <script src="assets/barchart.js"></script>
   <link rel="stylesheet" href="assets/style.css">
   <style>
-  #y-axis li::after {
-    position: absolute;
-    top: calc(50% - 1px);
-    right: 0;
-    width: 5px;
-    height: 1px;
-    background-color: #000;
-    content: '';
-  }
+    /* Demo page styles only */
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+    body {
+      margin: 10px 30px;
+    }
+    header {
+      display: block;
+      margin: 0 0 30px;
+    }
+    h1 {
+      font-family: 'Trebuchet MS', Times, serif;
+      font-size: 18px;
+      font-weight: 800;
+      margin: 20px 0 10px;
+    }
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 40px 0 10px;
+    }
+    a {
+      font-style: italic;
+    }
+    figure {
+      display: block;
+      margin: 0 0 20px;
+    }
+    figcaption {
+      margin-top: 10px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
-<div id="bar-chart-container"></div>
+  <header>
+    <h1>Welcome to the demo page of kevlabs&rsquo; bar chart utility!</h1>
+    <a href="https://github.com/kevlabs/lighthouse-js-barchart">https://github.com/kevlabs/lighthouse-js-barchart</a>
+  </header>
+  <h2>I. Vertical bar chart</h2>
+  <figure>
+    <div id="bar-chart-na-population"></div>
+    <figcaption>Evolution of North America&rsquo;s population (1971-2011) - Source: Wikipedia</figcaption>
+  </figure>
+  <h2>II. Vertical bar chart with negative entries</h2>
+  <figure>
+    <div id="bar-chart-uber-financials"></div>
+    <figcaption>Uber Technologies - Financial Results (2016-2018) - Source: Yahoo Finance</figcaption>
+  </figure>
+  <h2>III. Horizontal bar chart</h2>
+  <figure>
+    <div id="bar-chart-cities"></div>
+    <figcaption>Largest Urban Centres in Canada (2016) - Source: Wikipedia</figcaption>
+  </figure>
+  <h2>IV. Vertical stacked bar chart</h2>
+  <figure>
+    <div id="bar-chart-ttc-ridership"></div>
+    <figcaption>TTC Ridership by Vehicle Mode - Source: TTC Operating Statistics</figcaption>
+  </figure>
+  <h2>IV. Horizontal stacked bar chart</h2>
+  <figure>
+    <div id="bar-chart-survey"></div>
+    <figcaption>Bar chart as a visualization tool for satisfaction surveys</figcaption>
+  </figure>
+
+<script>
+
+//DEMO DATA
+
+// NA POPULATION
+// Source: Wikipedia
+
+const dataNA = {
+  groups: [1971, 1981, 1991, 2001, 2011],
+  series: [
+    {
+      label: 'Canada',
+      data: [21962032, 24819915, 28037420, 31020596, 33476688],
+      color: '#000',
+      backgroundColor: '#B2B09B'
+    },
+    {
+      label: 'Mexico',
+      data: [54669000, 71916000, 87890000, 105340000, 115683000],
+      color: '#000',
+      backgroundColor: '#43AA8B'
+    },
+    {
+      label: 'USA',
+      data: [206827000, 229466000, 252981000, 285082000, 311583000],
+      color: '#FFF',
+      backgroundColor: '#254441'
+    }
+  ]
+};
+
+const optionsNA = {
+  chart: {
+    height: '500',                      //in px - default in CSS
+    width: '700',                       //in px - default in CSS
+    type: 'inline',                     //inline, stacked
+    direction: 'vertical',            //vertical, horizontal
+    valueVerticalAlignment: 'top',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '12px',                     //in px
+      color: '#000',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'Evolution of North America\'s Population',
+    verticalAlignment:'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Trebuchet MS\', Arial, Helvetica, sans-serif',
+      size: '20px',
+      color: '#000',
+      weight: 'bolder'
+    }
+  },
+  xAxis: {
+    label: 'Year',
+    groupSpaceBetween: '20px',
+    font: {                             //if not supplied should default to top level
+      family: 'Palatino, Arial, sans-serif',
+      size: '16px',
+      color: '#AAA',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Million inhabitants',
+    unit: {
+      base: 1000000,
+      step: 25000000
+    },
+    font: {                             //if not supplied should default to top level
+      family: 'Palatino, Arial, sans-serif',
+      size: '16px',
+      color: '#AAA',
+      weight: 600
+    }
+  }
+};
 
 
-<div id="bc-container" style="display: flex; flex-direction: column; width: 400px; height: 300px;">
-  <header id="title"><h5 style="text-align:center">TITLE</h5></header>
-  <div class="chart-flex" style="flex-grow: 1; display: flex;">
-    <section id="y-axis" style="display: flex;">
-      <h6>Label</h6>
-      <ul>
-        <li>tick 1</li>
-        <li>tick 2</li>
-      </ul>
-    </section>
-    <div class="chart-flex" style="flex-grow: 1; display: flex; flex-direction: column;">
-      <div id="chart-area" style="position: relative; flex-grow: 1; display: flex; border-left: 1px solid #000;">
-        <div class="tick-bar" style="position: absolute; top: calc(20% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
-        <div class="tick-bar" style="position: absolute; top: calc(40% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
-        <div class="tick-bar" style="position: absolute; top: calc(60% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
-        <div class="tick-bar" style="position: absolute; top: calc(80% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
-        <div class="tick-bar" style="position: absolute; top: calc(100% - 1px); width: 100%; height: 1px; z-index: -1; background-color: #000;"></div>
-        <div class="data-group" style="flex-grow: 1; position: relative; margin: 0 10px;">
-          <div style="position: absolute; bottom: 0; width: 33.33%; height: 80%; background-color: red;"></div>
-          <div style="position: absolute; bottom: 0; left: 33.33%; width: 33.33%; height: 50%; background-color: blue;"></div>
-          <div style="position: absolute; bottom: 0; left: 66.66%; width: 33.33%; height: 60%; background-color: yellow;"></div>
-        </div>
-        <div class="data-group" style="flex-grow: 1; margin: 0 10px; background-color: #eee;"></div>
-        <div class="data-group" style="flex-grow: 1; margin: 0 10px; background-color: #eee;"></div>
-      </div>
-      <section id="x-axis">
-        <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
-          <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 1</li>
-          <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 2</li>
-          <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 3</li>
-        </ul>
-        <h6 style="text-align:center">Label</h6>
-      </section>
-    </div>
-  </div>
-</div>
+const containerNA = document.querySelector('#bar-chart-na-population');
+drawBarChart(dataNA, optionsNA, containerNA);
 
 
+// UBER FINANCIALS
+// Source: Yahoo Finance
 
-<div id="bc-container" style="display: flex; flex-direction: column; width: 400px; height: 300px;">
-  <header id="title"><h5 style="text-align:center">TITLE</h5></header>
-  <div class="chart-grid" style="flex-grow: 1; display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr auto;
-  grid-template-areas:
-    'y-axis chart-area'
-    '. x-axis';
-  justify-content: stretch;">
-    <section id="y-axis" style="grid-area: y-axis; display: flex;">
-    <!--<section id="y-axis" style="grid-area: y-axis; position: relative;">
-      <h6 style="position: absolute; top: 50%; transform: translate(-10px, -50%) rotate(-90deg); margin: 0; padding: 10px">X-Axis Super Long Label</h6>-->
-      <h6 style="writing-mode: vertical-rl; transform: rotate(180deg); text-align:center; margin: 0; padding: 10px;">X-Axis Super Long Label</h6>
-      <ul style="height: 100%; list-style: none; display: flex; flex-direction: column; margin: 0; padding: 0;">
-        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 1</li>
-        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 2</li>
-        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 3</li>
-        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 4</li>
-        <li style="flex-grow: 1; display: block; position: relative; padding: 0 10px;">tick 5</li>
-      </ul>
-    </section>
-    <div id="chart-area" style="grid-area: chart-area; position: relative; display: flex; border-left: 1px solid #000;">
-      <div class="tick-bar" style="position: absolute; top: calc(10% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
-      <div class="tick-bar" style="position: absolute; top: calc(30% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
-      <div class="tick-bar" style="position: absolute; top: calc(50% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
-      <div class="tick-bar" style="position: absolute; top: calc(70% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
-      <div class="tick-bar" style="position: absolute; top: calc(90% - 1px); width: 100%; z-index: -1; border-bottom: 1px dashed #000;"></div>
-      <div class="data-group" style="flex-grow: 1; position: relative; margin: 0 10px;">
-        <div style="position: absolute; bottom: 10%;; width: 33.33%; height: 80%; background-color: red;"></div>
-        <div style="position: absolute; bottom: 10%;; left: 33.33%; width: 33.33%; height: 50%; background-color: blue;"></div>
-        <div style="position: absolute; bottom: 0; left: 66.66%; width: 33.33%; height: 10%; background-color: yellow;"></div>
-      </div>
-      <div class="data-group" style="flex-grow: 1; display: flex; align-items: flex-end; margin: 0 10px">
-        <div style="flex-grow:1; position: relative; bottom: 10%; height: 80%; background-color: red;"><data value="80" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">80</data></div>
-        <div style="flex-grow:1; position: relative; bottom: 10%; height: 50%; background-color: blue;"><data value="50" style="position: absolute; bottom: 5px; left: 50%; transform: translate(-50%, 0);">50</data></div>
-        <div style="flex-grow:1; position: relative; bottom: 0; height: 10%; background-color: yellow;"><data value="10" style="position: absolute; top: 5px; left: 50%; transform: translate(-50%, 0);">10</data></div>
-      </div>
-      <div class="data-group" style="flex-grow: 1; display: flex; flex-direction: column-reverse; margin: 0 10px">
-        <div style="position: relative; bottom: calc(10% * 2/3); height: calc(80% * 1/3); background-color: red;"></div>
-        <div style="position: relative; bottom: calc(10% * 2/3); height: calc(50% * 1/3); background-color: blue;"></div>
-        <div style="order: -1; position: relative; bottom: calc(10% * 2/3); height: calc(10% * 1/3); background-color: yellow;"></div>
-      </div>
-    </div>
-    <section id="x-axis" style="grid-area: x-axis;">
-      <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
-        <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 1</li>
-        <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 2</li>
-        <li style="display: inline-block; flex-grow: 1; margin: 0 10px; text-align: center;">group 3</li>
-      </ul>
-      <h6 style="text-align:center; margin: 0; padding: 10px">Y-Axis could be long Label</h6>
-    </section>
+const dataUber = {
+  groups: [2016, 2017, 2018],
+  series: [
+    {
+      label: 'Total Revenue',
+      data: [3845000, 7932000, 11270000],
+      color: '#FFF',
+      backgroundColor: 'rgb(195, 66, 63)'
+    },
+    {
+      label: 'Gross Profit',
+      data: [736000, 2418000, 4131000],
+      color: '#000',
+      backgroundColor: '#9BC53D'
+    },
+    {
+      label: 'EBITDA',
+      data: [-3023000, -3857000, -2836000],
+      color: '#F00',
+      backgroundColor: '#FDE74C'
+    },
+    {
+      label: 'Net Income',
+      data: [-370000, -4033000, 997000],
+      color: '#000',
+      backgroundColor: '#5BC0EB'
+    }
+  ]
+};
 
-  </div>
-</div>
-
-
-<!-- FINAL PROTOTYPE BELOW -->
-<div class="bc-chart-area" style="width: 400px; height: 300px;">
-  <h5 class="bc-title">TITLE</h5>
-  <div class="bc-body-grid">
-    <section class="bc-y-axis">
-      <h6>Y-Axis Label</h6>
-      <ul>
-        <li>8</li><!-- +++ -->
-        <li>7</li><!-- +++ -->
-        <li>6</li><!-- +++ -->
-        <li>5</li><!-- +++ -->
-        <li>4</li><!-- +++ -->
-        <li>3</li><!-- +++ -->
-        <li>2</li><!-- +++ -->
-        <li>1</li><!-- +++ -->
-        <li>0</li><!-- +++ -->
-        <li>-1</li><!-- +++ -->
-      </ul>
-    </section>
-    <div class="bc-plot-area-wrapper">
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-grid-line-origin"></div><!-- ZERO LINE -->
-      <div class="bc-grid-line"></div><!-- +++ -->
-      <div class="bc-plot-area">
-        <div class="bc-data-group-inline"><!-- +++ || bc-data-group-stacked -->
-          <div class="bc-data-series-inline" style="height: 80%; bottom: 10%;"><data class="bc-data-value-middle" value="80">80</data></div><!-- +++ -->
-        </div>
-        <div class="bc-data-group-stacked"><!-- +++ -->
-          <div class="bc-data-series-stacked" style="height: 50%; bottom: 0%; background-color: #00F"><data class="bc-data-value-top" value="50">50</data></div><!-- +++ all entries to have the same bottom attr-->
-          <div class="bc-data-series-stacked-negative" style="height: 10%; bottom: 0;"><data class="bc-data-value-top" value="-10">-10</data></div>
-        </div>
-      </div>
-    </div>
-    <section class="bc-x-axis">
-      <ul>
-        <li>group 1</li><!-- +++ -->
-        <li>group 2</li><!-- +++ -->
-      </ul>
-      <h6>X-Axis Label</h6>
-    </section>
-  </div>
-</div>
+const optionsUber = {
+  chart: {
+    height: '500',                      //in px - default in CSS
+    width: '600',                       //in px - default in CSS
+    type: 'inline',                    //inline, stacked
+    direction: 'vertical',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '12px',                     //in px
+      color: '#BBB',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'Uber Technologies Financials',
+    verticalAlignment:'bottom',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '18px',
+      color: 'rgb(65, 78, 77)',
+      weight: 'bold'
+    }
+  },
+  xAxis: {
+    label: 'Year ended December 31',
+    groupSpaceBetween: '40px',
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Bn USD',
+    unit: {
+      base: 1000000,
+      step: 2000000
+    },
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  }
+};
 
 
+const containerUber = document.querySelector('#bar-chart-uber-financials');
+drawBarChart(dataUber, optionsUber, containerUber);
+
+
+// LARGEST URBAN CENTRES
+// Source: Wikipedia
+
+const dataCities = {
+  groups: ['Kitchener', 'Hamilton', 'Quebec City', 'Winnipeg', 'Ottawa-Gatineau', 'Edmonton', 'Calgary', 'Vancouver', 'Montreal', 'Toronto'],
+  series: [
+    {
+      label: 'Population in 2016',
+      data: [470015, 693645, 705103, 711925, 989657, 1062643, 1237656, 2264823, 3519595, 5429524],
+      color: '#818479',
+      backgroundColor: '#E7E08B'
+    }
+  ]
+};
+
+const optionsCities = {
+  chart: {
+    height: '600',                      //in px - default in CSS
+    width: '800',                       //in px - default in CSS
+    type: 'inline',                    //inline, stacked
+    direction: 'horizontal',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '12px',                     //in px
+      color: '#000',
+      weight: 300
+    }
+  },
+  title: {
+    label: 'Canada\'s Largest Urban Centres in 2016',
+    verticalAlignment: 'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: 'Palatino, Georgia, serif',
+      size: '18px',
+      color: '#636F64',
+      weight: 'bold'
+    }
+  },
+  xAxis: {
+    label: 'Urban Centre',
+    groupSpaceBetween: '20px',
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Inhabitants (in millions)',
+    unit: {
+      base: 1000000,
+      step: 500000
+    },
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  }
+};
+
+
+const containerCities = document.querySelector('#bar-chart-cities');
+drawBarChart(dataCities, optionsCities, containerCities);
+
+
+// TTC RIDERSHIP
+// Source: TTC
+
+const dataTTC = {
+  groups: [2012, 2014, 2017],
+  series: [
+    {
+      label: 'Subway/RT',
+      data: [239248798,249546043,264289462],
+      color: '#000',
+      backgroundColor: '#2CAA8D'
+    },
+    {
+      label: 'Bus',
+      data: [234582107,245291822,261112835],
+      color: '#FFF',
+      backgroundColor: '#F7B633'
+    },
+    {
+      label: 'Streetcar',
+      data: [58657125,65420214,55914914],
+      color: '#000',
+      backgroundColor: '#2098D8'
+    }
+  ]
+};
+
+const optionsTTC = {
+  chart: {
+    height: '450',                      //in px - default in CSS
+    width: '450',                       //in px - default in CSS
+    type: 'stacked',                    //inline, stacked
+    direction: 'vertical',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '13px',                     //in px
+      color: '#474F56',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'TTC Passengers by Vehicle Mode',
+    verticalAlignment: 'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '20px',
+      color: '#1C3075',
+      weight: 800
+    }
+  },
+  xAxis: {
+    label: 'Year',
+    groupSpaceBetween: '30px',
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '16px',
+      color: '#9D86CC',
+      weight: 700
+    }
+  },
+  yAxis: {
+    label: 'Million Passengers',
+    unit: {
+      base: 1000000,
+      step: 50000000
+    },
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '16px',
+      color: '#9D86CC',
+      weight: 700
+    }
+  }
+};
+
+
+const containerTTC = document.querySelector('#bar-chart-ttc-ridership');
+drawBarChart(dataTTC, optionsTTC, containerTTC);
+
+// HOTEL CUSTOMER SATISFACTION SURVEY
+
+const dataSurvey = {
+  groups: ['Facilities', 'Housekeeping', 'Transportation', 'Food & beverages', 'Off-site excursions'],
+  series: [
+    {
+      label: 'Extremely satisfied',
+      data: [2, 1, 1, 3, 2],
+      color: '#000',
+      backgroundColor: '#60A561'
+    },
+    {
+      label: 'Quite satisfied',
+      data: [4, 3, 4, 4, 3],
+      color: '#000',
+      backgroundColor: '#F0F66E'
+    },
+    {
+      label: 'Quite unsatisfied',
+      data: [3, 4, 4, 3, 3],
+      color: '#000',
+      backgroundColor: '#E4572E'
+    },
+    {
+      label: 'Extremely unsatisfied',
+      data: [1, 2, 1, 0, 2],
+      color: '#000',
+      backgroundColor: '#D1121F'
+    },
+  ]
+};
+
+const optionsSurvey = {
+  chart: {
+    height: '400',                      //in px - default in CSS
+    width: '500',                       //in px - default in CSS
+    type: 'stacked',                    //inline, stacked
+    direction: 'horizontal',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'center',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '13px',                     //in px
+      color: '#124559',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'Hotel Customer Satisfaction Survey',
+    verticalAlignment: 'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '20px',
+      color: '#272932',
+      weight: 700
+    }
+  },
+  xAxis: {
+    label: 'Categories',
+    groupSpaceBetween: '10px',
+    font: {                             //if not supplied should default to top level
+      size: '16px',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Guests',
+    unit: {
+      base: 1,
+      step: 5
+    },
+    font: {                             //if not supplied should default to top level
+      size: '16px',
+      weight: 700
+    }
+  }
+};
+
+
+const containerSurvey = document.querySelector('#bar-chart-survey');
+drawBarChart(dataSurvey, optionsSurvey, containerSurvey);
+
+</script>
 </body>
 </html>

@@ -160,15 +160,15 @@ class BarChart {
     }
 
     //all values in raw data unit
-    this.minVal = Math.min(...dataPoints);
-    this.maxVal = Math.max(...dataPoints);
+    this.minValBase = Math.min(...dataPoints) / this.options.yAxis.unit.base;
+    this.maxValBase = Math.max(...dataPoints) / this.options.yAxis.unit.base;
 
     this.stepBase = this.options.yAxis.unit.step / this.options.yAxis.unit.base;
-    this.minTickBase = Math.min(Math.floor(this.minVal / this.options.yAxis.unit.step) * this.stepBase, 0);
-    this.maxTickBase = Math.max(Math.ceil(this.maxVal / this.options.yAxis.unit.step) * this.stepBase, 0);
+    this.minTickBase = Math.min(Math.floor(this.minValBase / this.stepBase) * this.stepBase, 0);
+    this.maxTickBase = Math.max(Math.ceil(this.maxValBase / this.stepBase) * this.stepBase, 0);
     this.spanBase = this.maxTickBase - this.minTickBase;
     this.numTick = 1 + this.spanBase / this.stepBase;
-    this.spanBase = this.spanBase / this.numTick * (this.numTick + 1);
+    this.spanBase = this.spanBase / (this.numTick - 1) * this.numTick;
   }
 
   _renderYAxis(chartArea) {
@@ -231,11 +231,15 @@ class BarChart {
         barDivElem.style.color = BarChart.sanitizeColor(color);
         barDivElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
 
-        //set data attributes and innerText
+        //set data attributes
         barDivElem.setAttribute('data-value', dataValBase);
         barDivElem.setAttribute('data-series', label);
         barDivElem.setAttribute('data-group', groups[i].getAttribute('data-group'));
-        barDivElem.innerHTML = Math.round(dataValBase);
+
+        //store value in div for styling purposes (padding is an issue for extremely small values otherwise)
+        const barDataElem = document.createElement('div');
+        barDataElem.innerHTML = this.maxValBase >= 100 ? Math.round(dataValBase) : dataValBase;
+        barDivElem.append(barDataElem);
 
         //attach event listener for info window
         barDivElem.addEventListener('mouseenter', this._renderInfoWindow());

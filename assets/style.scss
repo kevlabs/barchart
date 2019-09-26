@@ -10,6 +10,10 @@
   font-weight: 300;
   border: 2px solid #000;
   padding: 10px;
+
+  & *, *::before, *::after {
+    box-sizing: border-box;
+  }
 }
 
 .bc-title {
@@ -18,7 +22,7 @@
   font-size: 20px;
   font-weight: 500;
   text-transform: uppercase;
-  margin: 0;
+  margin: 10px 0 5px;
   padding: 10px;
 }
 
@@ -26,7 +30,7 @@
   flex-grow: 1;
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: 1fr auto auto;
   grid-template-areas:
     'vertical-axis plot-area'
     '. horizontal-axis'
@@ -230,7 +234,10 @@
 
 %bc-data-value-vertical {
   justify-content: center;
+
+  & > div:first-child {
   padding: 5px 0;
+  }
 }
 
 .bc-data-value-top-vertical {
@@ -250,7 +257,10 @@
 
 %bc-data-value-horizontal {
   align-items: center;
-  padding: 0 5px;
+
+  & > div:first-child {
+    padding: 0 5px;
+  }
 }
 
 .bc-data-value-left-horizontal { //equivalent to bottom for vertical
@@ -317,7 +327,7 @@
   flex-wrap: wrap;
   list-style: none;
   background-color: #EEE;
-  margin: 10px 0 0 0;
+  margin: 10px 0 0;
   padding: 0 5px;
 }
 
@@ -372,9 +382,9 @@
 .bc-info-window-group {
   font-size: 1.05em;
   font-weight: bold;
-  margin: 0 0 5px 5px;
+  margin: 0 0 5px 3px;
 }
 
 .bc-info-window-value {
-  margin-left: 10px;
+  margin-left: 6px;
 }
