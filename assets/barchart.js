@@ -16,7 +16,7 @@ class BarChart {
   }
 
   static validateInput(data, options, container) {
-    return (BarChart.validateContainerInput(container) && BarChart.validateDataInput(data) && BarChart.validateOptionsInput(options)) ? true : false;
+    return BarChart.validateContainerInput(container) && BarChart.validateDataInput(data) && BarChart.validateOptionsInput(options);
   }
 
   static validateContainerInput(container) {
@@ -57,13 +57,13 @@ class BarChart {
 
       return data;
 
-    }
-    catch(e) {
+    } catch(e) {
       console.error(e);
       return false;
     }
   }
 
+  // eslint-disable-next-line complexity
   static validateOptionsInput(options) {
     try {
       //CHECK OPTIONS OBJECT
@@ -95,8 +95,7 @@ class BarChart {
 
       return options;
 
-    }
-    catch(e) {
+    } catch(e) {
       console.error(e);
       return false;
     }
@@ -108,17 +107,17 @@ class BarChart {
   }
   static sanitizeSize(size, multiplier = 1) {
     if (typeof size !== 'string' && typeof size !== 'number') { return false; }
-    size = size.toString().match(/\d+/);
-    return size ? size[0] * multiplier + 'px' : false;
+    const matches = size.toString().match(/\d+/);
+    return matches ? matches[0] * multiplier + 'px' : false;
   }
   static sanitizeFontFamily(family) {
     if (typeof family !== 'string') { return false; }
-    family = family.replace(/(\\)|(['"])/g, (match, slash, quote) => slash ? '' : '\\' + quote );
-    return /^[a-zA-Z,'"-\\\s]+$/.test(family) ? family : false;
+    let sanitizedStr = family.replace(/(\\)|(['"])/g, (match, slash, quote) => slash ? '' : '\\' + quote );
+    return /^[a-zA-Z,'"-\\\s]+$/.test(sanitizedStr) ? sanitizedStr : false;
   }
   static sanitizeFontWeight(weight) {
     if (typeof weight !== 'string' && typeof weight !== 'number') { return false; }
-    return /^([1-9]0{2}|normal|bold|bold|light|lighter)$/.test(weight.toString()) ? weight : false;
+    return /^([1-9]0{2}|normal|bold|bolder|light|lighter)$/.test(weight.toString()) ? weight : false;
   }
   static sanitizeVAlignment(align) {
     if (typeof align !== 'string') { return false; }
@@ -400,7 +399,7 @@ class BarChart {
       }
 
       return false;
-    }
+    };
 
   }
 
@@ -459,4 +458,4 @@ class BarChart {
 //BarChart API
 function drawBarChart(data, options, element) {
   return new BarChart(data, options, element);
-};
+}
