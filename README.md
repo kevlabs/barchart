@@ -1,15 +1,16 @@
 # KevLabs' Bar Chart (KLBC)
 KLBC is a web utility for rendering bar charts. It is available in either **vanilla JS or JS with jQuery**.
 
+
 ## Table of contents
----
 
 * [Features](#features)
+* [Examples](#examples)
 * [Dependencies](#dependencies)
 * [Getting started](#getting-started)
 
+
 ## Features
----
 
 KLBC comes packaged with a whole lot of customizable options, as listed below:
 * Data can be displayed as *horizontal* or *vertical* bars
@@ -24,30 +25,45 @@ Chart data is structured as series of group values where **series** refer to the
 > * Series: work, school, hobbies and sleep
 Each series would be made up of 5 data points, one for each group, representing the number of hours spent each day by members of the subject group towards the activity the series relates to.
 
-Scroll below for some examples of charts rendered with the utility. More examples can be found in the `index.html` and `index-jquery.html` files.
+Scroll below for some examples of charts rendered with the utility.
+
+
+## Examples
+
+1. Vertical bar chart
+![Image](assets/img/inline-vertical.png)
+
+2. Vertical stacked bar chart
+![Image](assets/img/stacked-vertical.png)
+
+3. Horizontal bar chart
+![Image](assets/img/inline-horizontal.png)
+
+More examples can be found in the `index.html` and `index-jquery.html` files.
+
 
 ## Dependencies
----
 
 ### Vanilla JavaScript version
 * none
+
 ### jQuery version
 * jQuery
 The utility is meant to be used within the confines of a browser with **CSS and Javascript (ES6) enabled**.
 
+
 ## Getting Started
----
 
 ### Vanilla JavaScript version
 1. Save `assets/barchart.js` in a directory accessible from your HTML file
 2. Load `barchart.js` in your HTML file
-3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#API-call))
+3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
 
 ### jQuery version
 1. Upload `assets/barchart-jquery.js` in a directory accessible from your HTML file
 2. Load jQuery in your HTML file from a local directory or a [CDN](https://code.jquery.com)
 2. Load `barchart-jquery.js` in your HTML file
-3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#API-call))
+3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
 
 ### Calling the API
 1. Create a block element in your HTML file and bundle it into a JS variable (`element` in our example)
@@ -129,9 +145,10 @@ const options = {
 };
 ```
 
-4. Call the API function;
+4. Call the API function
+
 The function must be passed the following attributes.
 ```
 drawBarChart(data, options, element);
 ```
-`element` is a JS `HTMLElement`, not a DOM element id.
+Where `element` is a JS `HTMLElement`, not a DOM element id.
