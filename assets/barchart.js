@@ -35,7 +35,7 @@ class BarChart {
       //CHECK DATA OBJECT
       if (typeof data !== 'object' || Object.getPrototypeOf(data) !== Object.prototype) {
         throw 'Data input is not an object!';
-      } else if (typeof data.groups !== 'object' || typeof data.series !== 'object' || Object.getPrototypeOf(data.groups) !== Array.prototype || Object.getPrototypeOf(data.series) !== Array.prototype) {
+      } else if (typeof data.groups !== 'object' || typeof data.series !== 'object' || !Array.isArray(data.groups) || !Array.isArray(data.series)) {
         throw 'Data input "groups" and "series" properties are either inexistent, of a type other than "array" or empty.';
       }
 
@@ -44,7 +44,7 @@ class BarChart {
           throw 'The data.series array must only contain objects.';
         } else if (typeof series.label !== 'string' && typeof series.label !== 'number') {
           throw 'The label property may be missing or be in a format other than string/number in some of your data.series objects.';
-        } else if (typeof series.data !== 'object' || Object.getPrototypeOf(series.data) !== Array.prototype || series.data.length !== data.groups.length) {
+        } else if (typeof series.data !== 'object' || !Array.isArray(series.data) || series.data.length !== data.groups.length) {
           throw 'The data property in one or more of your data.series objects is either inexistent, of a type other than "array" or of a size different than that of data.groups.';
         } else {
           series.data.forEach( (dataPoint, j) => {
@@ -132,6 +132,21 @@ class BarChart {
     return /^(top|bottom)$/.test(string.toString()) ? string : false;
   }
 
+  static setFontStyle(elem, font) {
+
+    //data validation
+    if (elem instanceof HTMLElement && typeof font === 'object' && Object.getPrototypeOf(font) === Object.prototype) {
+      elem.style.fontFamily = BarChart.sanitizeFontFamily(font.family);
+      elem.style.fontWeight = BarChart.sanitizeFontWeight(font.weight);
+      elem.style.fontSize = BarChart.sanitizeSize(font.size);
+      elem.style.color = BarChart.sanitizeColor(font.color);
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
   _calcYAxisData() {
 
     const dataPoints = [];
@@ -139,6 +154,7 @@ class BarChart {
     let seriesMinMax;
 
     //calculate min and max values
+    //for stacked charts, add up values of the same sign
     for (let i = 0; i < this.data.groups.length; i++) {
       if (this.options.chart.type === 'stacked') { seriesMinMax = [0, 0]; }
       for (let j = 0; j < this.data.series.length; j++) {
@@ -158,15 +174,16 @@ class BarChart {
       }
     }
 
-    //all values in raw data unit
+    //declare y-axis props in base unit
+    //these are used to render the min and max tick marks and the bar heights
     this.minValBase = Math.min(...dataPoints) / this.options.yAxis.unit.base;
     this.maxValBase = Math.max(...dataPoints) / this.options.yAxis.unit.base;
-
     this.stepBase = this.options.yAxis.unit.step / this.options.yAxis.unit.base;
     this.minTickBase = Math.min(Math.floor(this.minValBase / this.stepBase) * this.stepBase, 0);
     this.maxTickBase = Math.max(Math.ceil(this.maxValBase / this.stepBase) * this.stepBase, 0);
     this.spanBase = this.maxTickBase - this.minTickBase;
     this.numTick = 1 + this.spanBase / this.stepBase;
+    //adjust spanBase for plot area header - space before the first grid line
     this.spanBase = this.spanBase / (this.numTick - 1) * this.numTick;
   }
 
@@ -182,12 +199,7 @@ class BarChart {
     headingElem.innerHTML = this.options.yAxis.label;
 
     //heading font
-    if (typeof this.options.yAxis.font === 'object' && Object.getPrototypeOf(this.options.yAxis.font) === Object.prototype) {
-      headingElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.yAxis.font.family);
-      headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.yAxis.font.weight);
-      headingElem.style.fontSize = BarChart.sanitizeSize(this.options.yAxis.font.size);
-      headingElem.style.color = BarChart.sanitizeColor(this.options.yAxis.font.color);
-    }
+    BarChart.setFontStyle(headingElem, this.options.yAxis.font);
 
     wrapperElem.append(headingElem);
 
@@ -304,12 +316,7 @@ class BarChart {
     headingElem.innerHTML = this.options.xAxis.label;
 
     //heading font
-    if (typeof this.options.xAxis.font === 'object' && Object.getPrototypeOf(this.options.xAxis.font) === Object.prototype) {
-      headingElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.xAxis.font.family);
-      headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.xAxis.font.weight);
-      headingElem.style.fontSize = BarChart.sanitizeSize(this.options.xAxis.font.size);
-      headingElem.style.color = BarChart.sanitizeColor(this.options.xAxis.font.color);
-    }
+    BarChart.setFontStyle(headingElem, this.options.xAxis.font);
 
     wrapperElem.append(headingElem);
 
@@ -417,12 +424,7 @@ class BarChart {
     chartAreaElem.style.height = BarChart.sanitizeSize(this.options.chart.height);
 
     //font
-    if (typeof this.options.chart.font === 'object' && Object.getPrototypeOf(this.options.chart.font) === Object.prototype) {
-      chartAreaElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.chart.font.family);
-      chartAreaElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.chart.font.weight);
-      chartAreaElem.style.fontSize = BarChart.sanitizeSize(this.options.chart.font.size);
-      chartAreaElem.style.color = BarChart.sanitizeColor(this.options.chart.font.color);
-    }
+    BarChart.setFontStyle(chartAreaElem, this.options.chart.font);
 
     //CHART TITLE
     const headingElem = document.createElement('h5');
@@ -430,12 +432,7 @@ class BarChart {
     headingElem.innerHTML = this.options.title.label;
 
     //title font
-    if (typeof this.options.title.font === 'object' && Object.getPrototypeOf(this.options.title.font) === Object.prototype) {
-      headingElem.style.fontFamily = BarChart.sanitizeFontFamily(this.options.title.font.family);
-      headingElem.style.fontWeight = BarChart.sanitizeFontWeight(this.options.title.font.weight);
-      headingElem.style.fontSize = BarChart.sanitizeSize(this.options.title.font.size);
-      headingElem.style.color = BarChart.sanitizeColor(this.options.title.font.color);
-    }
+    BarChart.setFontStyle(headingElem, this.options.title.font);
 
     chartAreaElem.append(headingElem);
 

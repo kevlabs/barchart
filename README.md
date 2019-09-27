@@ -31,13 +31,13 @@ Scroll below for some examples of charts rendered with the utility.
 ## Examples
 
 1. Vertical bar chart
-![Image](assets/img/inline-vertical.png)
+<img src="assets/img/inline-vertical.png" alt="Vertical bar chart" width="400">
 
 2. Vertical stacked bar chart
-![Image](assets/img/stacked-vertical.png)
+<img src="assets/img/stacked-vertical.png" alt="Vertical stacked bar chart" width="400">
 
 3. Horizontal bar chart
-![Image](assets/img/inline-horizontal.png)
+<img src="assets/img/inline-horizontal.png" alt="Horizontal bar chart" width="400">
 
 More examples can be found in the `index.html` and `index-jquery.html` files.
 
@@ -88,8 +88,11 @@ const data = {
   ]
 };
 ```
-Variable types must be respected for the utility to run properly. `''`, `[]` and `{}` denote string, array and object types respectively.
-**The length of your `data.groups` and `data.series[].data` arrays must match. The `data.series` array may include one or many series.
+
+* Variable types must be respected for the utility to run properly. `''`, `[]` and `{}` denote string, array and object types respectively.
+* The length of your `data.groups` and `data.series[].data` arrays must match.
+* The `data.series` array may include one or many series.
+* **Call `BarChart.validateDataInput(data)` to validate your input format.** This function will log any formatting error to the console or return the `data` object if all tests are passed successfully.
 
 3. Declare chart options in a JS object formatted as below:
 
@@ -144,6 +147,8 @@ const options = {
   }
 };
 ```
+
+* **Call `BarChart.validateOptionsInput(options)` to validate your input format.** This function will log any formatting error to the console or return the `options` object if all tests are passed successfully.
 
 4. Call the API function
 
