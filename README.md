@@ -39,7 +39,7 @@ Scroll below for some examples of charts rendered with the utility.
 3. Horizontal bar chart
 <img src="assets/img/inline-horizontal.png" alt="Horizontal bar chart" width="400">
 
-More examples can be found in the `index.html` and `index-jquery.html` files.
+More examples can be found in the `index.html` (vanilla JS - [Demo](https://kevlabs.github.io/lighthouse-js-barchart/index.html)) and `index-jquery.html` (jQuery - [Demo](https://kevlabs.github.io/lighthouse-js-barchart/index-jquery.html)) files.
 
 
 ## Dependencies
@@ -56,12 +56,12 @@ The utility is meant to be used within the confines of a browser with **CSS and 
 ## Getting Started
 
 ### Vanilla JavaScript version
-1. Save `assets/barchart.js` in a directory accessible from your HTML file
+1. Upload `assets/barchart.js` to a directory accessible from your HTML file
 2. Reference `barchart.js` in your HTML file
 3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
 
 ### jQuery version
-1. Upload `assets/barchart-jquery.js` in a directory accessible from your HTML file
+1. Upload `assets/barchart-jquery.js` to a directory accessible from your HTML file
 2. Reference the jQuery library in your HTML file (uploaded to a local directory or fetched from a [CDN](https://code.jquery.com))
 2. Reference `barchart-jquery.js` in your HTML file
 3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
