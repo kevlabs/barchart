@@ -49,6 +49,7 @@ More examples can be found in the `index.html` and `index-jquery.html` files.
 
 ### jQuery version
 * jQuery
+
 The utility is meant to be used within the confines of a browser with **CSS and Javascript (ES6) enabled**.
 
 
@@ -56,17 +57,17 @@ The utility is meant to be used within the confines of a browser with **CSS and 
 
 ### Vanilla JavaScript version
 1. Save `assets/barchart.js` in a directory accessible from your HTML file
-2. Load `barchart.js` in your HTML file
+2. Reference `barchart.js` in your HTML file
 3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
 
 ### jQuery version
 1. Upload `assets/barchart-jquery.js` in a directory accessible from your HTML file
-2. Load jQuery in your HTML file from a local directory or a [CDN](https://code.jquery.com)
-2. Load `barchart-jquery.js` in your HTML file
+2. Reference the jQuery library in your HTML file (uploaded to a local directory or fetched from a [CDN](https://code.jquery.com))
+2. Reference `barchart-jquery.js` in your HTML file
 3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
 
 ### Calling the API
-1. Create a block element in your HTML file and bundle it into a JS variable (`element` in our example)
+1. Create a block element in your HTML file and assign to a JS variable (`element` in our example)
 2. Structure your chart data in a JavaScript object, as follows:
 
 ```
@@ -74,13 +75,13 @@ const data = {
   groups: [number | 'string', number | 'string'...],
   series: [
     {
-      label: 'Series 1',
+      label: number | 'string',                       //e.g. 'Series 1'
       data: [number, number...],
       color: '#hex | rgb(, , )',                      //optional - defaults to #000
       backgroundColor: '#hex | rgb(, , )'             //optional - defaults to #DDD
     },
     {
-      label: 'Series 2',
+      label: number | 'string',                       //e.g. 'Series 2'
       data: [number, number...],
       color: '#hex | rgb(, , )',                      //optional - defaults to #000
       backgroundColor: '#hex | rgb(, , )'             //optional - defaults to #DDD
@@ -91,7 +92,7 @@ const data = {
 
 * Variable types must be respected for the utility to run properly. `''`, `[]` and `{}` denote string, array and object types respectively.
 * The length of your `data.groups` and `data.series[].data` arrays must match.
-* The `data.series` array may include one or many series.
+* The `data.series` array may include one or several series.
 * **Call `BarChart.validateDataInput(data)` to validate your input format.** This function will log any formatting error to the console or return the `data` object if all tests are passed successfully.
 
 3. Declare chart options in a JS object formatted as below:
@@ -148,6 +149,7 @@ const options = {
 };
 ```
 
+* All above `options` properties must exist in your object unless indicated as 'optional'. As a rule of thumb, properties unrelated to styling are mandatory.
 * **Call `BarChart.validateOptionsInput(options)` to validate your input format.** This function will log any formatting error to the console or return the `options` object if all tests are passed successfully.
 
 4. Call the API function
