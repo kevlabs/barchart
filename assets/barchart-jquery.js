@@ -366,7 +366,7 @@ class BarChart {
 
       const elem = $(e.currentTarget);
 
-      if (this.infoWindow.parent() !== elem) {
+      if (this.infoWindow.parent().get(0) !== elem.get(0)) {
 
         //fill in HTML Elements
         this.infoWindow.children('.bc-info-window-series').html(`Series: ${elem.data('series')}`);
