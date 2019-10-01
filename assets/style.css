@@ -4,10 +4,11 @@
   flex-direction: column;
   width: 100%;
   height: 500px;
-  background-color: #FFF;
-  font-family: "Open Sans", Arial, Helvetica, sans-serif;
+  font-family: "'Open Sans', Arial, Helvetica, sans-serif";
   font-size: 12px;
   font-weight: 300;
+  color: #000;
+  background-color: #FFF;
   border: 2px solid #000;
   padding: 10px;
 }
@@ -18,9 +19,11 @@
 .bc-title {
   display: block;
   text-align: center;
+  text-transform: uppercase;
+  font-family: "'Open Sans', Arial, Helvetica, sans-serif";
   font-size: 20px;
   font-weight: 500;
-  text-transform: uppercase;
+  color: #000;
   margin: 10px 0 5px;
   padding: 10px;
 }
@@ -34,27 +37,25 @@
   justify-content: stretch;
 }
 
-.bc-x-axis-horizontal, .bc-y-axis-vertical {
+.bc-y-axis-vertical, .bc-x-axis-horizontal {
   grid-area: vertical-axis;
   display: flex;
 }
-.bc-x-axis-horizontal > h6, .bc-y-axis-vertical > h6 {
+.bc-y-axis-vertical > h6, .bc-x-axis-horizontal > h6 {
   writing-mode: vertical-rl;
   text-align: center;
   transform: rotate(180deg);
-  font-size: 14px;
-  font-weight: 500;
   margin: 0;
   padding: 10px 0;
 }
-.bc-x-axis-horizontal > ul, .bc-y-axis-vertical > ul {
+.bc-y-axis-vertical > ul, .bc-x-axis-horizontal > ul {
   display: flex;
   flex-direction: column-reverse;
   list-style: none;
   margin: 0;
   padding: 0 10px;
 }
-.bc-x-axis-horizontal > ul li, .bc-y-axis-vertical > ul li {
+.bc-y-axis-vertical > ul li, .bc-x-axis-horizontal > ul li {
   flex-grow: 1;
   height: 0;
   display: flex;
@@ -63,12 +64,24 @@
   padding: 0;
 }
 
-.bc-y-axis-vertical > ul li {
-  transform: translate(0, 50%);
+.bc-x-axis-horizontal > h6 {
+  font-family: "'Open Sans', Arial, Helvetica, sans-serif";
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
 }
-
 .bc-x-axis-horizontal > ul li {
   margin: 10px 0;
+}
+
+.bc-y-axis-vertical > h6 {
+  font-family: "'Open Sans', Arial, Helvetica, sans-serif";
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+}
+.bc-y-axis-vertical > ul li {
+  transform: translate(0, 50%);
 }
 
 .bc-plot-area-wrapper-horizontal, .bc-plot-area-wrapper-vertical {
@@ -238,8 +251,6 @@
 }
 .bc-y-axis-horizontal > h6, .bc-x-axis-vertical > h6 {
   text-align: center;
-  font-size: 14px;
-  font-weight: 500;
   margin: 0;
   padding: 0 10px;
 }
@@ -256,10 +267,22 @@
   justify-content: center;
 }
 
+.bc-x-axis-vertical > h6 {
+  font-family: "'Open Sans', Arial, Helvetica, sans-serif";
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+}
 .bc-x-axis-vertical > ul li {
   margin: 0 10px;
 }
 
+.bc-y-axis-horizontal > h6 {
+  font-family: "'Open Sans', Arial, Helvetica, sans-serif";
+  font-size: 14px;
+  font-weight: 500;
+  color: #000;
+}
 .bc-y-axis-horizontal > ul li {
   transform: translate(-50%, 0);
 }
@@ -316,13 +339,13 @@
 
 .bc-info-window-series {
   font-size: 1.1em;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 5px;
 }
 
 .bc-info-window-group {
   font-size: 1.05em;
-  font-weight: bold;
+  font-weight: 500;
   margin: 0 0 5px 3px;
 }
 

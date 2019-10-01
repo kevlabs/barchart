@@ -1,0 +1,47 @@
+$bc-color: (
+  'chart-background': #FFF,
+  'chart-border': #000,
+  'axis-line': #000,
+  'grid-line': #EEE,
+  'tick-mark': #000,
+  'bar-background': #DDD,
+  'bar-background-hover': #DDD,
+  'bar-content-hover': #AAA,
+  'legend-background': #EEE,
+  'info-window-background': #FFF,
+  'info-window-content': #000
+);
+
+$bc-font-style: (
+  'chart': (
+    'family': '\'Open Sans\', Arial, Helvetica, sans-serif',
+    'size': 12px,
+    'weight': 300,
+    'color': #000
+  ),
+  'title': (
+    'family': '\'Open Sans\', Arial, Helvetica, sans-serif',
+    'size': 20px,
+    'weight': 500,
+    'color': #000
+  ),
+  'x-axis': (
+    'family': '\'Open Sans\', Arial, Helvetica, sans-serif',
+    'size': 14px,
+    'weight': 500,
+    'color': #000
+  ),
+  'y-axis': (
+    'family': '\'Open Sans\', Arial, Helvetica, sans-serif',
+    'size': 14px,
+    'weight': 500,
+    'color': #000
+  )
+);
+
+@mixin bc-font-style-mixin($scope) {
+  font-family: map-get(map-get($bc-font-style, $scope), 'family');
+  font-size: map-get(map-get($bc-font-style, $scope), 'size');
+  font-weight: map-get(map-get($bc-font-style, $scope), 'weight');
+  color: map-get(map-get($bc-font-style, $scope), 'color');
+}

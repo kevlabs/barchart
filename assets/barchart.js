@@ -362,7 +362,7 @@ class BarChart {
   }
 
   _renderInfoWindow() {
-    //function factory. To be called when supplied to event handler
+    //function factory. Must be called to return event handler.
 
     //create info window HTMLElement if does not already exist
     if (!this.infoWindow) {

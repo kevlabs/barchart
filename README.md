@@ -1,5 +1,6 @@
 # KevLabs' Bar Chart (KLBC)
-KLBC is a web utility for rendering bar charts. It is available in either **vanilla JS or JS with jQuery**.
+KLBC is a web utility for rendering bar charts. It is available in either **vanilla JS or JS with jQuery**.\
+This project was completed as stretch work prior to joining Lighthouse Labs' Web Development Bootcamp program.
 
 
 ## Table of contents
@@ -58,16 +59,20 @@ The utility is meant to be used within the confines of a browser with **CSS and 
 ### Vanilla JavaScript version
 1. Upload `assets/barchart.js` to a directory accessible from your HTML file
 2. Reference `barchart.js` in your HTML file
-3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
+3. Call `drawBarChart()` with the relevant arguments (jump to [Calling the API](#calling-the-api))
 
 ### jQuery version
 1. Upload `assets/barchart-jquery.js` to a directory accessible from your HTML file
 2. Reference the jQuery library in your HTML file (uploaded to a local directory or fetched from a [CDN](https://code.jquery.com))
 2. Reference `barchart-jquery.js` in your HTML file
-3. Call `drawBarChart()` with the relevant attributes (jump to [Calling the API](#calling-the-api))
+3. Call `drawBarChart()` with the relevant arguments (jump to [Calling the API](#calling-the-api))
 
 ### Calling the API
-1. Create a block element in your HTML file and assign to a JS variable (`element` in our example)
+1. Create an empty block element in your HTML file where you would like the bar chart to appear and assign it to a JS variable (`element` in our example).
+```
+const element = document.querySelector('your element selector');
+```
+
 2. Structure your chart data in a JavaScript object, as follows:
 
 ```
@@ -154,8 +159,8 @@ const options = {
 
 4. Call the API function
 
-The function must be passed the following attributes.
+Finally call the `drawBarChart` function passing to it the variables `data`, `options` and `element` as arguments.
 ```
 drawBarChart(data, options, element);
 ```
-Where `element` is a JS `HTMLElement`, not a DOM element id.
+Note that `element` is a JS `HTMLElement`, not a DOM element id.

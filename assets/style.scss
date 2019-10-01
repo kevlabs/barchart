@@ -1,14 +1,14 @@
+@import 'variables';
+
 .bc-chart-area {
   box-sizing: border-box;
   display: flex;
   flex-direction: column; // change to column-reverse if title to be displayed below chart
   width: 100%; // default
   height: 500px; // default
-  background-color: #FFF;
-  font-family: 'Open Sans', Arial, Helvetica, sans-serif; // default
-  font-size: 12px;
-  font-weight: 300;
-  border: 2px solid #000;
+  @include bc-font-style-mixin('chart');
+  background-color: map-get($bc-color, 'chart-background');
+  border: 2px solid map-get($bc-color, 'chart-border');
   padding: 10px;
 
   & *, *::before, *::after {
@@ -19,9 +19,8 @@
 .bc-title {
   display: block;
   text-align: center;
-  font-size: 20px;
-  font-weight: 500;
   text-transform: uppercase;
+  @include bc-font-style-mixin('title');
   margin: 10px 0 5px;
   padding: 10px;
 }
@@ -46,8 +45,6 @@
     writing-mode: vertical-rl;
     text-align: center;
     transform: rotate(180deg);
-    font-size: 14px;
-    font-weight: 500;
     margin: 0;
     padding: 10px 0;
   }
@@ -71,17 +68,23 @@
   }
 }
 
-.bc-y-axis-vertical {
+.bc-x-axis-horizontal {
   @extend %bc-vertical-axis;
+  & > h6 {
+    @include bc-font-style-mixin('x-axis');
+  }
   & > ul li {
-    transform: translate(0, 50%);
+    margin: 10px 0;
   }
 }
 
-.bc-x-axis-horizontal {
+.bc-y-axis-vertical {
   @extend %bc-vertical-axis;
+  & > h6 {
+    @include bc-font-style-mixin('y-axis');
+  }
   & > ul li {
-    margin: 10px 0;
+    transform: translate(0, 50%);
   }
 }
 
@@ -94,13 +97,13 @@
 .bc-plot-area-wrapper-vertical {
   @extend %bc-plot-area-wrapper;
   flex-direction: column;
-  border-left: 1px solid #000;
+  border-left: 1px solid map-get($bc-color, 'axis-line');
 }
 
 .bc-plot-area-wrapper-horizontal {
   @extend %bc-plot-area-wrapper;
   flex-direction: row-reverse;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid map-get($bc-color, 'axis-line');
 }
 
 
@@ -110,14 +113,14 @@
 
   &::before {
     position: absolute;
-    background-color: #000;
+    background-color: map-get($bc-color, 'tick-mark');
     content: '';
   }
 }
 
 .bc-grid-line-vertical {
   @extend %bc-grid-line;
-  border-bottom: 1px dashed #EEE;
+  border-bottom: 1px dashed map-get($bc-color, 'grid-line');
 
   &::before {
     bottom: -1px;;
@@ -129,7 +132,7 @@
 
 .bc-grid-line-horizontal {
   @extend %bc-grid-line;
-  border-left: 1px dashed #EEE;
+  border-left: 1px dashed map-get($bc-color, 'grid-line');
 
   &::before {
     left: -1px;;
@@ -141,12 +144,12 @@
 
 .bc-grid-line-origin-vertical {
   @extend .bc-grid-line-vertical;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid map-get($bc-color, 'axis-line');
 }
 
 .bc-grid-line-origin-horizontal {
   @extend .bc-grid-line-horizontal;
-  border-left: 1px solid #000;
+  border-left: 1px solid map-get($bc-color, 'axis-line');
 }
 
 %bc-plot-area {
@@ -208,12 +211,12 @@
 %bc-data-series {
   position: relative;
   display: flex;
-  background-color: #DDD; // default, user-defined
+  background-color: map-get($bc-color, 'bar-background'); // default, user-defined
   transition: all 0.3s ease-out;
 
   &:hover {
-    color: #AAA !important;
-    background-color: #DDD !important;
+    color: map-get($bc-color, 'bar-content-hover') !important;
+    background-color: map-get($bc-color, 'bar-background-hover') !important;
   }
 }
 
@@ -285,8 +288,6 @@
 
   & > h6 {
     text-align:center;
-    font-size: 14px;
-    font-weight: 500;
     margin: 0;
     padding: 0 10px;
   }
@@ -308,6 +309,9 @@
 
 .bc-x-axis-vertical {
   @extend %bc-horizontal-axis;
+  & > h6 {
+    @include bc-font-style-mixin('x-axis');
+  }
   & > ul li {
     margin: 0 10px;
   }
@@ -315,6 +319,9 @@
 
 .bc-y-axis-horizontal {
   @extend %bc-horizontal-axis;
+  & > h6 {
+    @include bc-font-style-mixin('y-axis');
+  }
   & > ul li {
     transform: translate(-50%, 0);
   }
@@ -326,7 +333,7 @@
   display: flex;
   flex-wrap: wrap;
   list-style: none;
-  background-color: #EEE;
+  background-color: map-get($bc-color, 'legend-background');
   margin: 10px 0 0;
   padding: 0 5px;
 }
@@ -342,7 +349,7 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-color: #DDD; //default colour for series
+  background-color: map-get($bc-color, 'bar-background'); //default colour for series
   margin-right: 5px;
 }
 
@@ -353,8 +360,8 @@
   right: 50%;
   width: 140px;
   transform: translate(50%, 0);
-  color: #000;
-  background-color: #FFF;
+  color: map-get($bc-color, 'info-window-content');
+  background-color: map-get($bc-color, 'info-window-background');
   box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, .3);
   border-radius: 4px;
   padding: 5px;
@@ -366,7 +373,7 @@
     left: 50%;
     width: 0;
     transform: translate(-50%, 0);
-    border-top: 10px solid #AAA;
+    border-top: 10px solid map-get($bc-color, 'bar-content-hover');
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
     content: '';
@@ -375,13 +382,13 @@
 
 .bc-info-window-series {
   font-size: 1.1em;
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 5px;
 }
 
 .bc-info-window-group {
   font-size: 1.05em;
-  font-weight: bold;
+  font-weight: 500;
   margin: 0 0 5px 3px;
 }
 
