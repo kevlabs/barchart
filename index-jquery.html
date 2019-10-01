@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Bar Chart Demo Page</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="assets/barchart-jquery.js"></script>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* Demo page styles only */
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+    body {
+      margin: 10px 30px;
+    }
+    header {
+      display: block;
+      margin: 0 0 30px;
+    }
+    h1 {
+      font-family: 'Trebuchet MS', Times, serif;
+      font-size: 18px;
+      font-weight: 800;
+      margin: 20px 0 10px;
+    }
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 40px 0 10px;
+    }
+    a {
+      font-style: italic;
+    }
+    figure {
+      display: block;
+      margin: 0 0 20px;
+    }
+    figcaption {
+      margin-top: 10px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to the demo page of kevlabs&rsquo; bar chart utility!</h1>
+    <a href="https://github.com/kevlabs/lighthouse-js-barchart">https://github.com/kevlabs/lighthouse-js-barchart</a>
+  </header>
+  <h2>I. Vertical bar chart</h2>
+  <figure>
+    <div id="bar-chart-na-population"></div>
+    <figcaption>Evolution of North America&rsquo;s population (1971-2011) - Source: Wikipedia</figcaption>
+  </figure>
+  <h2>II. Vertical bar chart with negative entries</h2>
+  <figure>
+    <div id="bar-chart-uber-financials"></div>
+    <figcaption>Uber Technologies - Financial Results (2016-2018) - Source: Yahoo Finance</figcaption>
+  </figure>
+  <h2>III. Horizontal bar chart</h2>
+  <figure>
+    <div id="bar-chart-cities"></div>
+    <figcaption>Largest Urban Centres in Canada (2016) - Source: Wikipedia</figcaption>
+  </figure>
+  <h2>IV. Vertical stacked bar chart</h2>
+  <figure>
+    <div id="bar-chart-ttc-ridership"></div>
+    <figcaption>TTC Ridership by Vehicle Mode - Source: TTC Operating Statistics</figcaption>
+  </figure>
+  <h2>IV. Horizontal stacked bar chart</h2>
+  <figure>
+    <div id="bar-chart-survey"></div>
+    <figcaption>Bar chart as a visualization tool for satisfaction surveys</figcaption>
+  </figure>
+
+<script>
+
+//DEMO DATA
+
+// NA POPULATION
+// Source: Wikipedia
+
+const dataNA = {
+  groups: [1971, 1981, 1991, 2001, 2011],
+  series: [
+    {
+      label: 'Canada',
+      data: [21962032, 24819915, 28037420, 31020596, 33476688],
+      color: '#000',
+      backgroundColor: '#B2B09B'
+    },
+    {
+      label: 'Mexico',
+      data: [54669000, 71916000, 87890000, 105340000, 115683000],
+      color: '#000',
+      backgroundColor: '#43AA8B'
+    },
+    {
+      label: 'USA',
+      data: [206827000, 229466000, 252981000, 285082000, 311583000],
+      color: '#FFF',
+      backgroundColor: '#254441'
+    }
+  ]
+};
+
+const optionsNA = {
+  chart: {
+    height: '500',                      //in px - default in CSS
+    width: '700',                       //in px - default in CSS
+    type: 'inline',                     //inline, stacked
+    direction: 'vertical',            //vertical, horizontal
+    valueVerticalAlignment: 'top',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '12px',                     //in px
+      color: '#000',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'Evolution of North America\'s Population',
+    verticalAlignment:'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Trebuchet MS\', Arial, Helvetica, sans-serif',
+      size: '20px',
+      color: '#000',
+      weight: 'bolder'
+    }
+  },
+  xAxis: {
+    label: 'Year',
+    groupSpaceBetween: '20px',
+    font: {                             //if not supplied should default to top level
+      family: 'Palatino, Arial, sans-serif',
+      size: '16px',
+      color: '#AAA',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Million inhabitants',
+    unit: {
+      base: 1000000,
+      step: 25000000
+    },
+    font: {                             //if not supplied should default to top level
+      family: 'Palatino, Arial, sans-serif',
+      size: '16px',
+      color: '#AAA',
+      weight: 600
+    }
+  }
+};
+
+
+const containerNA = document.querySelector('#bar-chart-na-population');
+document.addEventListener('DOMContentLoaded', () => drawBarChart(dataNA, optionsNA, containerNA) );
+
+
+// UBER FINANCIALS
+// Source: Yahoo Finance
+
+const dataUber = {
+  groups: [2016, 2017, 2018],
+  series: [
+    {
+      label: 'Total Revenue',
+      data: [3845000, 7932000, 11270000],
+      color: '#FFF',
+      backgroundColor: 'rgb(195, 66, 63)'
+    },
+    {
+      label: 'Gross Profit',
+      data: [736000, 2418000, 4131000],
+      color: '#000',
+      backgroundColor: '#9BC53D'
+    },
+    {
+      label: 'EBITDA',
+      data: [-3023000, -3857000, -2836000],
+      color: '#F00',
+      backgroundColor: '#FDE74C'
+    },
+    {
+      label: 'Net Income',
+      data: [-370000, -4033000, 997000],
+      color: '#000',
+      backgroundColor: '#5BC0EB'
+    }
+  ]
+};
+
+const optionsUber = {
+  chart: {
+    height: '500',                      //in px - default in CSS
+    width: '600',                       //in px - default in CSS
+    type: 'inline',                    //inline, stacked
+    direction: 'vertical',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '12px',                     //in px
+      color: '#BBB',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'Uber Technologies Financials',
+    verticalAlignment:'bottom',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '18px',
+      color: 'rgb(65, 78, 77)',
+      weight: 'bold'
+    }
+  },
+  xAxis: {
+    label: 'Year ended December 31',
+    groupSpaceBetween: '40px',
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Bn USD',
+    unit: {
+      base: 1000000,
+      step: 2000000
+    },
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  }
+};
+
+
+const containerUber = document.querySelector('#bar-chart-uber-financials');
+document.addEventListener('DOMContentLoaded', () => drawBarChart(dataUber, optionsUber, containerUber) );
+
+
+// LARGEST URBAN CENTRES
+// Source: Wikipedia
+
+const dataCities = {
+  groups: ['Kitchener', 'Hamilton', 'Quebec City', 'Winnipeg', 'Ottawa-Gatineau', 'Edmonton', 'Calgary', 'Vancouver', 'Montreal', 'Toronto'],
+  series: [
+    {
+      label: 'Population in 2016',
+      data: [470015, 693645, 705103, 711925, 989657, 1062643, 1237656, 2264823, 3519595, 5429524],
+      color: '#818479',
+      backgroundColor: '#E7E08B'
+    }
+  ]
+};
+
+const optionsCities = {
+  chart: {
+    height: '600',                      //in px - default in CSS
+    width: '800',                       //in px - default in CSS
+    type: 'inline',                    //inline, stacked
+    direction: 'horizontal',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '12px',                     //in px
+      color: '#000',
+      weight: 300
+    }
+  },
+  title: {
+    label: 'Canada\'s Largest Urban Centres in 2016',
+    verticalAlignment: 'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: 'Palatino, Georgia, serif',
+      size: '18px',
+      color: '#636F64',
+      weight: 'bold'
+    }
+  },
+  xAxis: {
+    label: 'Urban Centre',
+    groupSpaceBetween: '20px',
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Inhabitants (in millions)',
+    unit: {
+      base: 1000000,
+      step: 500000
+    },
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, sans-serif',
+      size: '14px',
+      color: '#000',
+      weight: 600
+    }
+  }
+};
+
+
+const containerCities = document.querySelector('#bar-chart-cities');
+document.addEventListener('DOMContentLoaded', () => drawBarChart(dataCities, optionsCities, containerCities) );
+
+
+// TTC RIDERSHIP
+// Source: TTC
+
+const dataTTC = {
+  groups: [2012, 2014, 2017],
+  series: [
+    {
+      label: 'Subway/RT',
+      data: [239248798,249546043,264289462],
+      color: '#000',
+      backgroundColor: '#2CAA8D'
+    },
+    {
+      label: 'Bus',
+      data: [234582107,245291822,261112835],
+      color: '#FFF',
+      backgroundColor: '#F7B633'
+    },
+    {
+      label: 'Streetcar',
+      data: [58657125,65420214,55914914],
+      color: '#000',
+      backgroundColor: '#2098D8'
+    }
+  ]
+};
+
+const optionsTTC = {
+  chart: {
+    height: '450',                      //in px - default in CSS
+    width: '450',                       //in px - default in CSS
+    type: 'stacked',                    //inline, stacked
+    direction: 'vertical',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'right',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '13px',                     //in px
+      color: '#474F56',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'TTC Passengers by Vehicle Mode',
+    verticalAlignment: 'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '20px',
+      color: '#1C3075',
+      weight: 800
+    }
+  },
+  xAxis: {
+    label: 'Year',
+    groupSpaceBetween: '30px',
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '16px',
+      color: '#9D86CC',
+      weight: 700
+    }
+  },
+  yAxis: {
+    label: 'Million Passengers',
+    unit: {
+      base: 1000000,
+      step: 50000000
+    },
+    font: {                             //if not supplied should default to top level
+      family: 'Garamond, Arial, sans-serif',
+      size: '16px',
+      color: '#9D86CC',
+      weight: 700
+    }
+  }
+};
+
+
+const containerTTC = document.querySelector('#bar-chart-ttc-ridership');
+document.addEventListener('DOMContentLoaded', () => drawBarChart(dataTTC, optionsTTC, containerTTC) );
+
+// HOTEL CUSTOMER SATISFACTION SURVEY
+
+const dataSurvey = {
+  groups: ['Facilities', 'Housekeeping', 'Transportation', 'Food & beverages', 'Off-site excursions'],
+  series: [
+    {
+      label: 'Extremely satisfied',
+      data: [2, 1, 1, 3, 2],
+      color: '#000',
+      backgroundColor: '#60A561'
+    },
+    {
+      label: 'Quite satisfied',
+      data: [4, 3, 4, 4, 3],
+      color: '#000',
+      backgroundColor: '#F0F66E'
+    },
+    {
+      label: 'Quite unsatisfied',
+      data: [3, 4, 4, 3, 3],
+      color: '#000',
+      backgroundColor: '#E4572E'
+    },
+    {
+      label: 'Extremely unsatisfied',
+      data: [1, 2, 1, 0, 2],
+      color: '#000',
+      backgroundColor: '#D1121F'
+    },
+  ]
+};
+
+const optionsSurvey = {
+  chart: {
+    height: '400',                      //in px - default in CSS
+    width: '500',                       //in px - default in CSS
+    type: 'stacked',                    //inline, stacked
+    direction: 'horizontal',               //vertical, horizontal
+    valueVerticalAlignment: 'middle',      //top, middle, bottom - applies only to vertical charts
+    valueHorizontalAlignment: 'center',  //left, center, right - applies only to horizontal charts
+    font: {                             //default in CSS
+      family: 'Arial, Helvetica, sans-serif',
+      size: '13px',                     //in px
+      color: '#124559',
+      weight: 400
+    }
+  },
+  title: {
+    label: 'Hotel Customer Satisfaction Survey',
+    verticalAlignment: 'top',            //top, bottom
+    font: {                             //if not supplied should default to top level
+      family: '\'Open Sans\', Arial, Helvetica, sans-serif',
+      size: '20px',
+      color: '#272932',
+      weight: 700
+    }
+  },
+  xAxis: {
+    label: 'Categories',
+    groupSpaceBetween: '10px',
+    font: {                             //if not supplied should default to top level
+      size: '16px',
+      weight: 600
+    }
+  },
+  yAxis: {
+    label: 'Guests',
+    unit: {
+      base: 1,
+      step: 5
+    },
+    font: {                             //if not supplied should default to top level
+      size: '16px',
+      weight: 700
+    }
+  }
+};
+
+
+const containerSurvey = document.querySelector('#bar-chart-survey');
+document.addEventListener('DOMContentLoaded', () => drawBarChart(dataSurvey, optionsSurvey, containerSurvey) );
+
+</script>
+</body>
+</html>

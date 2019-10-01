@@ -6,7 +6,7 @@ class BarChart {
     if (!BarChart.validateInput(data, options, container)) { return false; }
 
     //init properties
-    this.container = container;
+    this.container = $(container);
     this.data = JSON.parse(JSON.stringify(data));
     this.options = JSON.parse(JSON.stringify(options));
 
@@ -135,11 +135,12 @@ class BarChart {
   static setFontStyle(elem, font) {
 
     //data validation
-    if (elem instanceof HTMLElement && typeof font === 'object' && Object.getPrototypeOf(font) === Object.prototype) {
-      elem.style.fontFamily = BarChart.sanitizeFontFamily(font.family);
-      elem.style.fontWeight = BarChart.sanitizeFontWeight(font.weight);
-      elem.style.fontSize = BarChart.sanitizeSize(font.size);
-      elem.style.color = BarChart.sanitizeColor(font.color);
+    if (elem instanceof jQuery && typeof font === 'object' && Object.getPrototypeOf(font) === Object.prototype) {
+      elem.css('font-family', BarChart.sanitizeFontFamily(font.family))
+      .css('font-weight', BarChart.sanitizeFontWeight(font.weight))
+      .css('font-size', BarChart.sanitizeSize(font.size))
+      .css('color', BarChart.sanitizeColor(font.color));
+
       return true;
     } else {
       return false;
@@ -191,24 +192,18 @@ class BarChart {
 
     this._calcYAxisData();
 
-    const wrapperElem = document.createElement('div');
-    wrapperElem.classList.add(`bc-y-axis-${this.options.chart.direction}`);
+    const wrapperElem = $(`<div class="bc-y-axis-${this.options.chart.direction}" />`);
 
     //render heading
-    const headingElem = document.createElement('h6');
-    headingElem.innerHTML = this.options.yAxis.label;
-
+    const headingElem = $('<h6 />').html(this.options.yAxis.label);
     //heading font
     BarChart.setFontStyle(headingElem, this.options.yAxis.font);
-
     wrapperElem.append(headingElem);
 
     //render tick labels
-    const labelWrapperElem = document.createElement('ul');
+    const labelWrapperElem = $('<ul />');
     for (let i = 0, val = this.minTickBase; i < this.numTick; i++) {
-      const labelElem = document.createElement('li');
-      labelElem.innerHTML = val;
-      labelWrapperElem.append(labelElem);
+      $('<li />').html(val).appendTo(labelWrapperElem);
       val += this.stepBase;
     }
     wrapperElem.append(labelWrapperElem);
@@ -229,31 +224,30 @@ class BarChart {
         const dataValBase = Math.round(dataPoint / this.options.yAxis.unit.base * 100) / 100;
 
         //create bar div elem
-        const barDivElem = document.createElement('div');
-        barDivElem.classList.add(`bc-data-series-${this.options.chart.type + (this.options.chart.type === 'stacked' && dataValBase < 0 ? '-negative' : '')}`, `bc-data-value-${valAlign}-${this.options.chart.direction}`);
+        const barDivElem = $('<div />')
+        .addClass(`bc-data-series-${this.options.chart.type + (this.options.chart.type === 'stacked' && dataValBase < 0 ? '-negative' : '')} bc-data-value-${valAlign}-${this.options.chart.direction}`);
 
         //set height/width of bar
-        barDivElem.style[this.options.chart.direction === 'vertical' ? 'height' : 'width'] = Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 1000 + '%';
+        barDivElem.css(this.options.chart.direction === 'vertical' ? 'height' : 'width', Math.round(Math.abs(dataValBase / this.spanBase) * 100000) / 1000 + '%');
 
         //set offset from x-axis
-        barDivElem.style[this.options.chart.direction === 'vertical' ? 'bottom' : 'left'] = Math.round((Math.min(this.options.chart.type === 'inline' ? dataValBase : this.groupStackedNegativeBase[i], 0) - this.minTickBase) / this.spanBase * 100000) / 1000 + '%';
+        barDivElem.css(this.options.chart.direction === 'vertical' ? 'bottom' : 'left', Math.round((Math.min(this.options.chart.type === 'inline' ? dataValBase : this.groupStackedNegativeBase[i], 0) - this.minTickBase) / this.spanBase * 100000) / 1000 + '%');
 
         //set color styles
-        barDivElem.style.color = BarChart.sanitizeColor(color);
-        barDivElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
+        barDivElem.css('color', BarChart.sanitizeColor(color))
+        .css('background-color', BarChart.sanitizeColor(backgroundColor));
 
         //set data attributes
-        barDivElem.setAttribute('data-value', dataValBase);
-        barDivElem.setAttribute('data-series', label);
-        barDivElem.setAttribute('data-group', groups[i].getAttribute('data-group'));
+        barDivElem.data('value', dataValBase)
+        .data('series', label)
+        .data('group', groups[i].data('group'));
 
         //store value in div for styling purposes (padding is an issue for extremely small values otherwise)
-        const barDataElem = document.createElement('div');
-        barDataElem.innerHTML = this.maxValBase >= 100 ? Math.round(dataValBase) : dataValBase;
-        barDivElem.append(barDataElem);
+        $('<div />').html(this.maxValBase >= 100 ? Math.round(dataValBase) : dataValBase)
+        .appendTo(barDivElem);
 
         //attach event listener for info window
-        barDivElem.addEventListener('mouseenter', this._renderInfoWindow());
+        barDivElem.on('mouseenter', this._renderInfoWindow());
 
         //append to div to group
         groups[i].append(barDivElem);
@@ -266,13 +260,13 @@ class BarChart {
   _renderDataGroups(plotArea) {
     //return an array of data-group containers
     const groups = this.data.groups.map( (group) => {
-      const elem = document.createElement('div');
-      elem.classList.add(`bc-data-group-${this.options.chart.type}-${this.options.chart.direction}`);
-      elem.setAttribute('data-group', group);
+      const elem = $('<div />')
+      .addClass(`bc-data-group-${this.options.chart.type}-${this.options.chart.direction}`)
+      .data('group', group);
 
       //set space between groups
-      elem.style[this.options.chart.direction === 'vertical' ? 'marginLeft' : 'marginTop'] = BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5);
-      elem.style[this.options.chart.direction === 'vertical' ? 'marginRight' : 'marginBottom'] = BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5);
+      elem.css(this.options.chart.direction === 'vertical' ? 'margin-left' : 'margin-top', BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5))
+      .css(this.options.chart.direction === 'vertical' ? 'margin-right' : 'margin-bottom', BarChart.sanitizeSize(this.options.xAxis.groupSpaceBetween, 0.5));
 
       plotArea.append(elem);
       return elem;
@@ -285,20 +279,19 @@ class BarChart {
   _renderPlotArea(chartArea) {
 
     //render wrapper div
-    const wrapperElem = document.createElement('div');
-    wrapperElem.classList.add(`bc-plot-area-wrapper-${this.options.chart.direction}`);
+    const wrapperElem = $(`<div class="bc-plot-area-wrapper-${this.options.chart.direction}" />`);
 
     //render grid lines
     for (let i = 0, val = this.maxTickBase; i < this.numTick; i++) {
-      const gridLineElem = document.createElement('div');
-      gridLineElem.classList.add(`${val ? 'bc-grid-line' : 'bc-grid-line-origin'}-${this.options.chart.direction}`);
-      wrapperElem.append(gridLineElem);
+      const gridLineElem = $('<div />')
+      .addClass(`${val ? 'bc-grid-line' : 'bc-grid-line-origin'}-${this.options.chart.direction}`)
+      .appendTo(wrapperElem);
       val -= this.stepBase;
     }
 
     //render plot area
-    const divElem = document.createElement('div');
-    divElem.classList.add(`bc-plot-area-${this.options.chart.direction}`);
+    const divElem = $('<div />')
+    .addClass(`bc-plot-area-${this.options.chart.direction}`);
     this._renderDataGroups(divElem);
     wrapperElem.append(divElem);
 
@@ -308,24 +301,18 @@ class BarChart {
   }
 
   _renderXAxis(chartArea) {
-    const wrapperElem = document.createElement('div');
-    wrapperElem.classList.add(`bc-x-axis-${this.options.chart.direction}`);
+    const wrapperElem = $(`<div class="bc-x-axis-${this.options.chart.direction}" />`);
 
     //render heading
-    const headingElem = document.createElement('h6');
-    headingElem.innerHTML = this.options.xAxis.label;
-
+    const headingElem = $('<h6 />').html(this.options.xAxis.label);
     //heading font
     BarChart.setFontStyle(headingElem, this.options.xAxis.font);
-
     wrapperElem.append(headingElem);
 
     //render group labels
-    const labelWrapperElem = document.createElement('ul');
+    const labelWrapperElem = $('<ul />');
     this.data.groups.forEach( (group) => {
-      const labelElem = document.createElement('li');
-      labelElem.innerHTML = group;
-      labelWrapperElem.append(labelElem);
+      $('<li />').html(group).appendTo(labelWrapperElem);
     } );
     wrapperElem.append(labelWrapperElem);
 
@@ -335,19 +322,16 @@ class BarChart {
   }
 
   _renderLegend(chartArea) {
-    const wrapperElem = document.createElement('ul');
-    wrapperElem.classList.add('bc-legend');
+    const wrapperElem = $('<ul class="bc-legend" />');
 
     this.data.series.forEach( ({label, backgroundColor}) => {
       //create legend list item
-      const itemElem = document.createElement('li');
-      itemElem.classList.add('bc-legend-item');
+      const itemElem = $('<li class="bc-legend-item" />');
 
       //add color square
-      const itemSquareElem = document.createElement('div');
-      itemSquareElem.classList.add('bc-legend-item-square');
-      itemSquareElem.style.backgroundColor = BarChart.sanitizeColor(backgroundColor);
-      itemElem.append(itemSquareElem);
+      $('<div class="bc-legend-item-square" />')
+      .css('backgroundColor', BarChart.sanitizeColor(backgroundColor))
+      .appendTo(itemElem);
 
       //add item text
       itemElem.append(label);
@@ -366,43 +350,36 @@ class BarChart {
 
     //create info window HTMLElement if does not already exist
     if (!this.infoWindow) {
-      this.infoWindow = document.createElement('div');
-      this.infoWindow.classList.add('bc-info-window');
+      this.infoWindow = $('<div class="bc-info-window" />');
 
       //add series label div
-      const seriesElem = document.createElement('div');
-      seriesElem.classList.add('bc-info-window-series');
-      this.infoWindow.append(seriesElem);
+      this.infoWindow.append($('<div class="bc-info-window-series" />'));
       //add group label div
-      const groupElem = document.createElement('div');
-      groupElem.classList.add('bc-info-window-group');
-      this.infoWindow.append(groupElem);
+      this.infoWindow.append($('<div class="bc-info-window-group" />'));
       //add group label div
-      const valueElem = document.createElement('div');
-      valueElem.classList.add('bc-info-window-value');
-      this.infoWindow.append(valueElem);
+      this.infoWindow.append($('<div class="bc-info-window-value" />'));
     }
 
     //return arrow function so value of this is locked.
     //can call event target with e.currentTarget
     return (e) => {
 
-      const elem = e.currentTarget;
+      const elem = $(e.currentTarget);
 
-      if (this.infoWindow.parentNode !== elem) {
+      if (this.infoWindow.parent() !== elem) {
 
         //fill in HTML Elements
-        this.infoWindow.querySelector('.bc-info-window-series').innerHTML = `Series: ${elem.getAttribute('data-series')}`;
-        this.infoWindow.querySelector('.bc-info-window-group').innerHTML = `Group: ${elem.getAttribute('data-group')}`;
-        this.infoWindow.querySelector('.bc-info-window-value').innerHTML = `Value: ${elem.getAttribute('data-value')}`;
+        this.infoWindow.children('.bc-info-window-series').html(`Series: ${elem.data('series')}`);
+        this.infoWindow.children('.bc-info-window-group').html(`Group: ${elem.data('group')}`);
+        this.infoWindow.children('.bc-info-window-value').html(`Value: ${elem.data('value')}`);
 
         //add event listener to deal with remove info window when out of bar
-        elem.addEventListener('mouseleave', this._renderInfoWindow(), {once: true});
+        elem.one('mouseleave', this._renderInfoWindow());
 
         elem.append(this.infoWindow);
 
       } else {
-        elem.removeChild(this.infoWindow);
+        this.infoWindow.detach();
       }
 
       return false;
@@ -412,32 +389,27 @@ class BarChart {
 
   _renderChartArea(chartContainer) {
 
-    const chartAreaElem = document.createElement('div');
-    chartAreaElem.classList.add('bc-chart-area');
+    const chartAreaElem = $('<div class="bc-chart-area" />');
 
     //set user-defined style
     //title top/bottom
-    if (BarChart.sanitizeTopBottom(this.options.title.verticalAlignment) === 'bottom') { chartAreaElem.style.flexDirection = 'column-reverse'; }
+    if (BarChart.sanitizeTopBottom(this.options.title.verticalAlignment) === 'bottom') { chartAreaElem.css('flexDirection', 'column-reverse'); }
 
     //width + height
-    chartAreaElem.style.width = BarChart.sanitizeSize(this.options.chart.width);
-    chartAreaElem.style.height = BarChart.sanitizeSize(this.options.chart.height);
+    chartAreaElem.width(BarChart.sanitizeSize(this.options.chart.width))
+    .height(BarChart.sanitizeSize(this.options.chart.height));
 
     //font
     BarChart.setFontStyle(chartAreaElem, this.options.chart.font);
 
     //CHART TITLE
-    const headingElem = document.createElement('h5');
-    headingElem.classList.add('bc-title');
-    headingElem.innerHTML = this.options.title.label;
-
+    const headingElem = $('<h5 class="bc-title" />')
+    .html(this.options.title.label);
     //title font
     BarChart.setFontStyle(headingElem, this.options.title.font);
-
     chartAreaElem.append(headingElem);
 
-    const chartGridElem = document.createElement('div');
-    chartGridElem.classList.add('bc-body-grid');
+    const chartGridElem = $('<div class="bc-body-grid" />');
     chartAreaElem.append(chartGridElem);
 
     this._renderYAxis(chartGridElem);
