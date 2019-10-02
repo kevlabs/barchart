@@ -30,3 +30,5 @@ function watchFiles() {
 
 exports.default = series(sassCompile, lintJS);
 exports.watch = watchFiles;
+exports.lint = lintJS;
+exports.sass = sassCompile;
