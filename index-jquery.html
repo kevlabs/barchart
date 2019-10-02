@@ -47,7 +47,7 @@
 </head>
 <body>
   <header>
-    <h1>Welcome to the demo page of kevlabs&rsquo; bar chart utility!</h1>
+    <h1>Welcome to the demo page of kevlabs&rsquo; bar chart utility! - jQuery</h1>
     <a href="https://github.com/kevlabs/lighthouse-js-barchart">https://github.com/kevlabs/lighthouse-js-barchart</a>
   </header>
   <h2>I. Vertical bar chart</h2>
@@ -158,8 +158,8 @@ const optionsNA = {
 };
 
 
-const containerNA = document.querySelector('#bar-chart-na-population');
-document.addEventListener('DOMContentLoaded', () => drawBarChart(dataNA, optionsNA, containerNA) );
+const containerNA = $('#bar-chart-na-population');
+$( () => drawBarChart(dataNA, optionsNA, containerNA.get(0)) );
 
 
 // UBER FINANCIALS
@@ -246,8 +246,8 @@ const optionsUber = {
 };
 
 
-const containerUber = document.querySelector('#bar-chart-uber-financials');
-document.addEventListener('DOMContentLoaded', () => drawBarChart(dataUber, optionsUber, containerUber) );
+const containerUber = $('#bar-chart-uber-financials');
+$( () => drawBarChart(dataUber, optionsUber, containerUber.get(0)) );
 
 
 // LARGEST URBAN CENTRES
@@ -316,8 +316,8 @@ const optionsCities = {
 };
 
 
-const containerCities = document.querySelector('#bar-chart-cities');
-document.addEventListener('DOMContentLoaded', () => drawBarChart(dataCities, optionsCities, containerCities) );
+const containerCities = $('#bar-chart-cities');
+$( () => drawBarChart(dataCities, optionsCities, containerCities.get(0)) );
 
 
 // TTC RIDERSHIP
@@ -398,8 +398,8 @@ const optionsTTC = {
 };
 
 
-const containerTTC = document.querySelector('#bar-chart-ttc-ridership');
-document.addEventListener('DOMContentLoaded', () => drawBarChart(dataTTC, optionsTTC, containerTTC) );
+const containerTTC = $('#bar-chart-ttc-ridership');
+$( () => drawBarChart(dataTTC, optionsTTC, containerTTC.get(0)) );
 
 // HOTEL CUSTOMER SATISFACTION SURVEY
 
@@ -480,8 +480,8 @@ const optionsSurvey = {
 };
 
 
-const containerSurvey = document.querySelector('#bar-chart-survey');
-document.addEventListener('DOMContentLoaded', () => drawBarChart(dataSurvey, optionsSurvey, containerSurvey) );
+const containerSurvey = $('#bar-chart-survey');
+$( () => drawBarChart(dataSurvey, optionsSurvey, containerSurvey.get(0)) );
 
 </script>
 </body>
