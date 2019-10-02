@@ -158,8 +158,8 @@ const optionsNA = {
 };
 
 
-const containerNA = $('#bar-chart-na-population');
-$( () => drawBarChart(dataNA, optionsNA, containerNA.get(0)) );
+const containerNA = $('#bar-chart-na-population').get(0);
+$( () => drawBarChart(dataNA, optionsNA, containerNA) );
 
 
 // UBER FINANCIALS
@@ -246,8 +246,8 @@ const optionsUber = {
 };
 
 
-const containerUber = $('#bar-chart-uber-financials');
-$( () => drawBarChart(dataUber, optionsUber, containerUber.get(0)) );
+const containerUber = $('#bar-chart-uber-financials').get(0);
+$( () => drawBarChart(dataUber, optionsUber, containerUber) );
 
 
 // LARGEST URBAN CENTRES
@@ -316,8 +316,8 @@ const optionsCities = {
 };
 
 
-const containerCities = $('#bar-chart-cities');
-$( () => drawBarChart(dataCities, optionsCities, containerCities.get(0)) );
+const containerCities = $('#bar-chart-cities').get(0);
+$( () => drawBarChart(dataCities, optionsCities, containerCities) );
 
 
 // TTC RIDERSHIP
@@ -398,8 +398,8 @@ const optionsTTC = {
 };
 
 
-const containerTTC = $('#bar-chart-ttc-ridership');
-$( () => drawBarChart(dataTTC, optionsTTC, containerTTC.get(0)) );
+const containerTTC = $('#bar-chart-ttc-ridership').get(0);
+$( () => drawBarChart(dataTTC, optionsTTC, containerTTC) );
 
 // HOTEL CUSTOMER SATISFACTION SURVEY
 
@@ -480,8 +480,8 @@ const optionsSurvey = {
 };
 
 
-const containerSurvey = $('#bar-chart-survey');
-$( () => drawBarChart(dataSurvey, optionsSurvey, containerSurvey.get(0)) );
+const containerSurvey = $('#bar-chart-survey').get(0);
+$( () => drawBarChart(dataSurvey, optionsSurvey, containerSurvey) );
 
 </script>
 </body>

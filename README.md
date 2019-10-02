@@ -24,7 +24,8 @@ Chart data is structured as series of group values where **series** refer to the
 > For instances, a chart aiming at capturing how different age groups break up their daily routines between four activities may be structured in the following fashion:
 > * Groups: 0-6 years old, 7-17 years old, 18-25 years old, 26-64 years old, 65+ years old
 > * Series: work, school, hobbies and sleep
-Each series would be made up of 5 data points, one for each group, representing the number of hours spent each day by members of the subject group towards the activity the series relates to.
+>
+> Each series is made up of 5 data points, one for each group, representing the number of hours spent each day by members of the subject group towards the activity the series relates to.
 
 Scroll below for some examples of charts rendered with the utility.
 
@@ -40,37 +41,35 @@ Scroll below for some examples of charts rendered with the utility.
 3. Horizontal bar chart
 <img src="assets/img/inline-horizontal.png" alt="Horizontal bar chart" width="400">
 
-More examples can be found in the `index.html` (vanilla JS - [Demo](https://kevlabs.github.io/lighthouse-js-barchart/index.html)) and `index-jquery.html` (jQuery - [Demo](https://kevlabs.github.io/lighthouse-js-barchart/index-jquery.html)) files.
+More examples can be found in the `index.html` (vanilla JS - [Demo](https://kevlabs.github.io/lighthouse-js-barchart/index.html)) and `index-jquery.html` (jQuery - [Demo](https://kevlabs.github.io/lighthouse-js-barchart/index-jquery.html)) files. Feel free to take a look at their source code to see how the API was called in each situation.
 
 
 ## Dependencies
 
-### Vanilla JavaScript version
-* none
-
-### jQuery version
-* jQuery
-
-The utility is meant to be used within the confines of a browser with **CSS and Javascript (ES6) enabled**.
-
+If you decide to clone this project from GitHub, once done, run `npm install` to load all its dependencies.\
+In production, the bar chart utility is meant to be used within the confines of a browser with **CSS and Javascript (ES6) enabled**. The jQuery version will require you to load the **jQuery library** onto your webpage.
 
 ## Getting Started
 
 ### Vanilla JavaScript version
-1. Upload `assets/barchart.js` to a directory accessible from your HTML file
-2. Reference `barchart.js` in your HTML file
+1. Upload `assets/barchart.js` and `assets/style.css` to a directory accessible from your HTML file
+2. Reference both files in your HTML file
 3. Call `drawBarChart()` with the relevant arguments (jump to [Calling the API](#calling-the-api))
 
 ### jQuery version
-1. Upload `assets/barchart-jquery.js` to a directory accessible from your HTML file
-2. Reference the jQuery library in your HTML file (uploaded to a local directory or fetched from a [CDN](https://code.jquery.com))
-2. Reference `barchart-jquery.js` in your HTML file
+1. Upload `assets/barchart-jquery.js` and `assets/style.css` to a directory accessible from your HTML file
+2. Reference the jQuery library in your HTML file (uploaded to your local directory or fetched from a [CDN](https://code.jquery.com))
+2. Reference both `barchart-jquery.js` and `style.css` in your HTML file
 3. Call `drawBarChart()` with the relevant arguments (jump to [Calling the API](#calling-the-api))
 
 ### Calling the API
 1. Create an empty block element in your HTML file where you would like the bar chart to appear and assign it to a JS variable (`element` in our example).
 ```
+//Vanilla JS:
 const element = document.querySelector('your element selector');
+
+//JS with jQuery
+const element = $('your element selector').get(0);
 ```
 
 2. Structure your chart data in a JavaScript object, as follows:
@@ -163,4 +162,4 @@ Finally call the `drawBarChart` function passing to it the variables `data`, `op
 ```
 drawBarChart(data, options, element);
 ```
-Note that `element` is a JS `HTMLElement`, not a DOM element id.
+Note that `element` is a JS `HTMLElement`, not a DOM element id or jQuery object.
